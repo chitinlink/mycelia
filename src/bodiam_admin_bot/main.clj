@@ -23,7 +23,13 @@
 (defn get-blacklisted-artist [content]
   (some #(when (string/includes? content %) %) @banned-artists))
 
-;(defn add-artist-blacklist )
+(defn add-artists-to-blacklist [content {:keys [id]}]
+  (let [artists-to-blacklist (->> (string/split content #" ")
+                                  (rest)
+                                  (map string/trim)
+                                  (filter #(not (some #{%} @banned-artists))))]
+    (swap! banned-artists concat artists-to-blacklist)
+    (spit "./banned-artists.txt" (string/join #"\n" artists-to-blacklist) :append true)))
 
 (defn send-warning-dm [blacklisted-artist {:keys [id]}]
   (let [warning-message (format "Your message has been deleted as it contained a link to an artist blacklisted on the server - `%s` (to see a full list of blacklisted artists on the server, use !listartistblacklist)" blacklisted-artist)]
@@ -43,6 +49,8 @@
       (string/includes? content "!listartistblacklist") (do
                                                           (delete-message)
                                                           (list-banned-artists author))
+      (string/includes? content "!blacklistartists") (do (delete-message)
+                                                         (add-artists-to-blacklist content author))
       (and (string/includes? content "twitter")
            (get-blacklisted-artist content))
       (do
@@ -64,5 +72,3 @@
     (e/message-pump! event-ch handle-event)
     (m/stop-connection! messaging-ch)
     (c/disconnect-bot! connection-ch)))
-
-(-main)
