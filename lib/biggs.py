@@ -17,10 +17,10 @@ def remove_prefix(command_prefix: str, message: discord.Message):
 
 class Biggs(discord.Client):
   def setup(self, config: dict):
-    self.run(config["token"])
     self.tinydb_instance = TinyDB(config["tinydb_path"])
     self._server_id = config["server_id"] # type: int
     self._notice_channel_id = config["notice_channel_id"] # type: int
+    self.run(config["token"])
 
   def db_insert(self, message_contents: str):
     parsed_json = json.loads(message_contents)
