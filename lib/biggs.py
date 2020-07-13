@@ -2,15 +2,16 @@
 
 import logging
 
+# External dependencies
 import discord
+from tinydb import TinyDB, Query
 
 log = logging.getLogger("Biggs")
 
 class Biggs(discord.Client):
-
   def setup(self, config: dict):
     self.run(config["token"])
-
+    self._tinydb_instance = TinyDB(config["tinydb_path"])
     self._server_id = config["server_id"] # type: int
     self._notice_channel_id = config["notice_channel_id"] # type: int
 

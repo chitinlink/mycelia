@@ -7,8 +7,7 @@ import logging
 import logging.config
 import os
 
-import discord
-
+# Local dependencies
 from lib.biggs import Biggs
 
 # Make sure logs/ exists
