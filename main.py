@@ -9,6 +9,8 @@ import os
 
 import discord
 
+from lib.biggs import Biggs
+
 # Make sure logs/ exists
 if not os.path.exists("./logs"): os.makedirs("logs")
 # Make sure logs/latest.log exists
@@ -44,25 +46,6 @@ with open("logging.yml", "r") as y:
   config = yaml.load(y, Loader=yaml.FullLoader) # type: dict
   logging.config.dictConfig(config)
 log = logging.getLogger("Biggs")
-
-# Basic client definition
-class Biggs(discord.Client):
-
-  def setup(self, config: dict):
-    self.run(config["token"])
-
-    self._server_id = config["server_id"] # type: int
-    self._notice_channel_id = config["notice_channel_id"] # type: int
-
-  async def on_ready(self):
-    log.info(f"Logged on as {self.user}!")
-
-  async def on_message(self, message: discord.Message):
-    try:
-      log.info(f"Message from {message.author}: {message.content}")
-    except Exception as exc:
-      log.error(exc)
-      raise exc
 
 # Load config file and create an instance of Biggs
 with open("biggs.yml", "r") as y:
