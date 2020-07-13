@@ -1,15 +1,31 @@
-# bodiamadminbot
+Biggs
+=====
 
-The Bodiam Admin Bot is (currently) written using **Clojure**, with the [discljord](https://github.com/IGJoshua/discljord) library. 
+Bodiam moderation bot, written in Python 3, using [discord.py](https://github.com/Rapptz/discord.py).
 
-## Prerequisites
+## Running
 
-For local development, one will need the following:
-* A version of the JDK - (Primarily using Java 11).
-* Basic clojure tooling, in particular [Leiningen](https://leiningen.org/)
+You need [Python 3](https://www.python.org/).
 
-## Building/Running a JAR
+1. Install the dependencies:
 
-To build a jar from the root of the folder, you can use the command `lein uberjar`, and the JAR is generated within the `target/` folder. 
+    ```sh
+    pip install -r ./requirements.txt
+    ```
 
-When running the JAR, you must ensure it is within the same folder as the banned artist/user list.
+2. Fill out `biggs.yml`.
+
+3. Run `main.py`:
+
+    ```sh
+    # Normally:
+    python3 main.py
+    # On Windows:
+    py -3 main.py
+    ```
+
+## Developing
+
+Please use [Editorconfig](https://editorconfig.org/).
+
+The bot producees gzipped logfiles in the `logs` folder.
