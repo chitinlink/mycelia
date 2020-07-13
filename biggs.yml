@@ -6,7 +6,9 @@ server_id: 144870693983485952 # Bodiam
 # Channel the bot sends administrative notices to
 notice_channel_id: 732236293207228437 # bot-test
 
-# File path to store associated TinyDB database
-tinydb_path: "data/db.json"
+# Path for TinyDB database folder
+tinydb_path: "./data/"
+# Path for logs folder
+logs_path: "./logs/"
 
 # TODO some way of telling it what roles/users are trusted

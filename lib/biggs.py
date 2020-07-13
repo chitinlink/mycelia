@@ -7,6 +7,7 @@ import json
 import discord
 from tinydb import TinyDB, Query
 
+# Logging
 log = logging.getLogger("Biggs")
 
 def check_prefix(command_prefix: str, message: discord.Message):
@@ -17,14 +18,15 @@ def remove_prefix(command_prefix: str, message: discord.Message):
 
 class Biggs(discord.Client):
   def setup(self, config: dict):
-    self.tinydb_instance = TinyDB(config["tinydb_path"])
-    self._server_id = config["server_id"] # type: int
+    self._tinydb_instance   = TinyDB(f"{config['tinydb_path']}db.json")
+    self._server_id         = config["server_id"] # type: int
     self._notice_channel_id = config["notice_channel_id"] # type: int
+
     self.run(config["token"])
 
   def db_insert(self, message_contents: str):
     parsed_json = json.loads(message_contents)
-    self.tinydb_instance.insert(parsed_json)
+    self._tinydb_instance.insert(parsed_json)
 
   async def on_ready(self):
     log.info(f"Logged on as {self.user}!")
