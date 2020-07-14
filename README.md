@@ -28,4 +28,4 @@ You need [Python 3](https://www.python.org/).
 
 Please use [Editorconfig](https://editorconfig.org/).
 
-The bot producees gzipped logfiles in the `logs` folder.
+The bot producees gzipped logfiles in the `logs` folder. I recommend having an extra terminal with `tail -f ./logs/latest.log` open when debugging.
