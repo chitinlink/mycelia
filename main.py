@@ -31,16 +31,12 @@ with open("biggs.yml", "r") as y:
         # Decide on path for the archived log
         # The date of the log is in the first line
         path = f"{config['logs_path']}{f.readline().strip()}"
-        if os.path.exists(f"{path}.log.gz"):
-          if os.path.exists(f"{path}-1.log.gz"):
-            i = 2
-            while True:
-              if not os.path.exists(f"{path}-{i}.log.gz"):
-                path += f"-{i}"
-                break
-              i += 1
-          else:
-            path += "-1"
+        i = 0
+        while True:
+          if not os.path.exists(f"{path}-{i}.log.gz"):
+            path += f"-{i}"
+            break
+          i += 1
         path += ".log.gz"
 
         # gzip file
