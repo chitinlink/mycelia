@@ -2,6 +2,7 @@
 
 import logging
 import json
+import re
 
 # External dependencies
 import discord
@@ -39,13 +40,13 @@ class Biggs(discord.Client):
         and do whatever we want afterwards """
 
     # Strip the message of Biggs mentions and split it into arguments
-    args = self.remove_mention(message.content).split()
+    args = re.findall(r'\{.+?\}|".+?"|\w+', self.remove_mention(message.content))
 
     # Select specific command
     # TODO: extract this into a separate module, or organize it some other way
     if args[0] == "inserttest":
       log.debug("inserttest invoked.")
-      self.db_insert("".join(args[1:]))
+      self.db_insert(args[1])
       await message.channel.send("Added to the database.")
     else:
       await message.channel.send("I'm not sure what you mean.")
