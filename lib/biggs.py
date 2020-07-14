@@ -17,7 +17,7 @@ logging.Logger.msg = msg
 class Biggs(discord.Client):
   def setup(self, config: dict):
     self._tinydb_instance   = TinyDB(f"{config['tinydb_path']}db.json")
-    self._server_id         = config["server_id"] # type: int
+    self._guild_id          = config["guild_id"] # type: int
     self._notice_channel_id = config["notice_channel_id"] # type: int
 
     self.run(config["token"])
