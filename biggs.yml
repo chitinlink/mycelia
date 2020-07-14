@@ -2,7 +2,7 @@
 token: NzMyMTUwODI2MDc1Njg0ODg0.Xwwarw.hVMCFi9qDL3bGH3PxhVZI210TG4
 
 # Server the bot operates in
-server_id: 144870693983485952 # Bodiam
+guild_id: 144870693983485952 # Bodiam
 # Channel the bot sends administrative notices to
 notice_channel_id: 732236293207228437 # bot-test
 
