@@ -9,6 +9,9 @@ from tinydb import TinyDB, Query
 
 # Logging
 log = logging.getLogger("Biggs")
+logging.addLevelName(15, "MESSAGE")
+def msg(self, message, *args, **kws): self._log(15, message, args, **kws)
+logging.Logger.msg = msg
 
 def check_prefix(command_prefix: str, message: discord.Message):
   return message.content.startswith(command_prefix)
@@ -32,6 +35,7 @@ class Biggs(discord.Client):
     log.info(f"Logged on as {self.user}!")
 
   async def on_message(self, message: discord.Message):
+    log.msg(f"{message.channel}§{message.author}: {message.content}")
     try:
       log.info(f"Message from {message.author}: {message.content}")
       if check_prefix("$inserttest", message):
