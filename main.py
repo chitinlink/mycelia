@@ -10,9 +10,9 @@ import os
 # Local dependencies
 from lib.biggs import Biggs
 
-# Load config
-with open("biggs.yml", "r") as y:
-  try:
+try:
+  # Load config
+  with open("biggs.yml", "r") as y:
     config = yaml.load(y, Loader=yaml.FullLoader) # type: dict
 
     path_latest = f"{config['logs_path']}latest.log"
@@ -60,20 +60,19 @@ with open("biggs.yml", "r") as y:
     if not os.path.exists(f"{config['tinydb_path']}db.json"):
       open(f"{config['tinydb_path']}db.json", "w", encoding="utf-8")
 
-    # Create an instance of Biggs
-    log.debug("Instanciating Biggs...")
-    biggs = Biggs()
+  # Create an instance of Biggs
+  log.debug("Instanciating Biggs...")
+  biggs = Biggs()
 
-    # Start Biggs
-    log.debug("Starting Biggs...")
-    biggs.setup(config)
+  # Start Biggs
+  log.debug("Starting Biggs...")
+  biggs.setup(config)
 
-  # Log exceptions
-  except Exception as exc: # FIXME
-    log.error(exc)
-    raise exc
+# Log exceptions
+except Exception as exc: # FIXME
+  log.error(exc, exc_info=True)
 
-  # And then exit
-  finally:
-    log.info("Exiting")
-    print(f"Log file available at ./logs/latest.log")
+# And then exit
+finally:
+  log.info("Exiting")
+  print(f"Log file available at ./logs/latest.log")
