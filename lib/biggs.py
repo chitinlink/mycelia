@@ -18,9 +18,9 @@ logging.Logger.msg = msg
 
 class Biggs(discord.Client):
   def setup(self, config: dict):
-    self._tinydb_instance = TinyDB(f"{config['tinydb_path']}db.json")
+    self._db = TinyDB(f"{config['tinydb_path']}db.json")
 
-    self._blacklist_schema = json.load(open('blacklist_schema.json'))
+    self._blacklist_member_schema = json.load(open("./lib/schema/blacklist_member.json"))
 
     self._guild_id = config["guild_id"] # type: int
 
@@ -37,39 +37,37 @@ class Biggs(discord.Client):
         removes the mention(s) and returns the remaining text. """
     return message.replace(f"<@!{self.user.id}>", "").strip()
 
-  def db_insert(self, parsed_json):
-    self._tinydb_instance.insert(parsed_json)
-
-  def add_blacklist(blacklist_json: str):
+  def add_blacklist_member(self, blacklist_member: str):
     try:
+      print(blacklist_member)
       # Parse JSON from string
-      parsed_json = json.loads(blacklist_json)
-      # Validate the JSON against the 'blacklist' schema - throws if invalid.
-      jsonschema.validate(instance=parsed_json, schema=self._blacklist_schema)
+      data = json.loads(blacklist_member)
+      # Validate the JSON against the "blacklist" schema - throws if invalid.
+      jsonschema.validate(instance=data, schema=self._blacklist_member_schema)
       # Submit validated JSON
-      db_insert(parsed_json)
-    except:
-      e = sys.exc_info()[0]
-      log.info(f"Invalid JSON submitted, got exception: {e}")
-      raise e
+      self._db.table("blacklist").insert(data)
+    except Exception as exc:
+      log.error(exc)
+      raise exc
 
   async def process_command(self, message: discord.Message):
-    """ Take in a message and decide if it's a command,
+    """ Take in a message and decide if it"s a command,
         and do whatever we want afterwards """
 
     # Strip the message of Biggs mentions and split it into arguments
-    args = re.findall(r'\{.+?\}|".+?"|\w+', self.remove_mention(message.content))
+    args = re.findall(r'\{.*\}|".+?"|\w+', self.remove_mention(message.content))
 
-    # Select specific command
     # TODO: extract this into a separate module, or organize it some other way
-    if args[0] == "addblacklist":
-      log.debug("addblacklist invoked.")
+    # Select specific command
+    if args[0] == "blacklist" and args[1] == "add":
+      log.debug("Command \"blacklist add\" invoked.")
       try:
-        self.add_blacklist(args[1])
-        await message.channel.send(f"Added new blacklist to database")
-      except:
-        e = sys.exc_info()[0]
-        await message.channel.send(f"Failed to submit to database, got exception: {e}")
+        self.add_blacklist_member(args[2])
+        await message.channel.send(f"Added to blacklist")
+      except Exception as exc:
+        log.error(exc)
+        await message.channel.send(f"Failed to submit to database, got exception: {exc}")
+        raise exc
     else:
       await message.channel.send("I'm not sure what you mean.")
 
@@ -80,12 +78,13 @@ class Biggs(discord.Client):
     log.msg(f"{message.channel}§{message.author}: {message.content}")
 
     try:
-      # Check if we're being mentioned
-      if self.mentioning_me(message):
-        # Shrug off message if it's from another bot
-        if message.author.bot: return
-        # Process the message as a command
-        await self.process_command(message)
+      # Ignore unless it's in the correct server.
+      if message.guild.id == self._guild_id:
+        # Check if we're being mentioned
+        # and it's not from another bot
+        if self.mentioning_me(message) and not message.author.bot:
+          # Process the message as a command
+          await self.process_command(message)
 
     except Exception as exc: # FIXME
       log.error(exc, exc_info=True)
