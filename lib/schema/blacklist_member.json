@@ -1,0 +1,81 @@
+{
+  "type": "object",
+  "required": [ "name", "aliases", "reason" ],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "aliases": {
+      "title": "Aliases",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minimum": 1
+      }
+    },
+    "urls": {
+      "title": "URLs",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "minimum": 0,
+        "anyOf": [
+          {
+            "title": "Plain URL",
+            "type": "object",
+            "required": [ "plain" ],
+            "additionalProperties": false,
+            "properties": {
+              "plain": { "type": "string", "format": "uri" }
+            }
+          },
+          {
+            "title": "Regular Expression",
+            "type": "object",
+            "required": [ "regex" ],
+            "additionalProperties": false,
+            "properties": {
+              "regex": { "type": "string", "format": "regex" }
+            }
+          },
+          {
+            "title": "Twitter username",
+            "type": "object",
+            "required": [ "twitter" ],
+            "additionalProperties": false,
+            "properties": {
+              "twitter": { "type": "string", "pattern": "^@[a-zA-Z_0-9]+$" }
+            }
+          },
+          {
+            "title": "Tumblr username",
+            "type": "object",
+            "required": [ "tumblr" ],
+            "additionalProperties": false,
+            "properties": {
+              "tumblr": { "type": "string" }
+            }
+          }
+        ]
+      }
+    },
+    "reason": {
+      "title": "Reason",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["short", "long"],
+      "properties": {
+        "short": {
+          "title": "Short reason",
+          "type": "string"
+        },
+        "long": {
+          "title": "Full reason",
+          "type": "string"
+        }
+      }
+    }
+  }
+}
