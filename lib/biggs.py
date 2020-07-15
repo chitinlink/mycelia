@@ -5,7 +5,7 @@ import json
 import re
 import sys
 from math import ceil
-from utils import quote
+from lib.utils import quote
 
 # External dependencies
 import discord
@@ -60,87 +60,90 @@ class Biggs(discord.Client):
     # Select specific command
 
     # blacklist
-    if args[0] == "blacklist":
-      if len(args) >= 2:
+    if len(args) >= 1:
+      if args[0] == "blacklist":
+        if len(args) >= 2:
 
-        # blacklist add
-        if args[1] == "add":
-          log.debug("Command \"blacklist add\" invoked.")
-          try:
-            member = self.add_blacklist_member(args[2])
-            await message.channel.send(f"Added `{member['name']}` to blacklist")
-          except jsonschema.exceptions.ValidationError as exc:
-            await message.channel.send(f"Error: {exc.message}")
-          except json.decoder.JSONDecodeError as exc:
-            await message.channel.send(f"Error: {exc.msg}")
+          # blacklist add
+          if args[1] == "add":
+            log.debug("Command \"blacklist add\" invoked.")
+            try:
+              member = self.add_blacklist_member(args[2])
+              await message.channel.send(f"Added `{member['name']}` to blacklist")
+            except jsonschema.exceptions.ValidationError as exc:
+              await message.channel.send(f"Error: {exc.message}")
+            except json.decoder.JSONDecodeError as exc:
+              await message.channel.send(f"Error: {exc.msg}")
 
-        # blacklist list
-        elif args[1] == "list":
-          log.debug("Command \"blacklist list\" invoked.")
-          msg = "**Blacklist:**\n\n"
-          for i in self._blacklist.all():
-            msg += f"`{i['name']}`   "
-          msg += "\n\nUse `blacklist view <entry>` for details."
-          await message.channel.send(msg)
+          # blacklist list
+          elif args[1] == "list":
+            log.debug("Command \"blacklist list\" invoked.")
+            msg = "**Blacklist:**\n\n"
+            for i in self._blacklist.all():
+              msg += f"`{i['name']}`   "
+            msg += "\n\nUse `blacklist view <entry>` for details."
+            await message.channel.send(msg)
 
-        # blacklist view
-        elif args[1] == "view":
-          log.debug("Command \"blacklist view\" invoked.")
-          if len(args) >= 3:
+          # blacklist view
+          elif args[1] == "view":
+            log.debug("Command \"blacklist view\" invoked.")
+            if len(args) >= 3:
 
-            q = self._blacklist.get(where("name") == args[2])
+              q = self._blacklist.get(where("name") == args[2])
 
-            long = ""
-            if len(args) >= 4 and args[3] == "long":
-              long += "\n**Long reason:**\n"
-              long += q['reason']['long']
-            else:
-              long += f"\nUse `blacklist view {q['name']} long` to view the long reason."
+              long = ""
+              if len(args) >= 4 and args[3] == "long":
+                long += "\n**Long reason:**\n"
+                long += q['reason']['long']
+              else:
+                long += f"\nUse `blacklist view {q['name']} long` to view the long reason."
 
-            if q != "":
-              aliases = "/".join(q['aliases'])
-              short = q['reason']['short']
-              handles = ""
-              for h in q['handles']:
-                _type = list(h)[0]
-                value = h[list(h)[0]]
-                handles += "• "
-                if _type == "plain":
-                  handles += f"<{value}>"
-                elif _type == "regex":
-                  handles += f"Regular expression: `{value}`"
-                elif _type == "twitter":
-                  handles += f"{value} - <https://twitter.com/{value[1:]}>"
-                elif _type == "tumblr":
-                  handles += f"<https://{value}.tumblr.com> / <https://www.tumblr.com/dashboard/blog/{value}>"
-                handles += "\n"
+              if q != "":
+                aliases = "/".join(q['aliases'])
+                short = q['reason']['short']
+                handles = ""
+                for h in q['handles']:
+                  _type = list(h)[0]
+                  value = h[list(h)[0]]
+                  handles += "• "
+                  if _type == "plain":
+                    handles += f"<{value}>"
+                  elif _type == "regex":
+                    handles += f"Regular expression: `{value}`"
+                  elif _type == "twitter":
+                    handles += f"{value} - <https://twitter.com/{value[1:]}>"
+                  elif _type == "tumblr":
+                    handles += f"<https://{value}.tumblr.com> / <https://www.tumblr.com/dashboard/blog/{value}>"
+                  handles += "\n"
 
-              await message.channel.send(
-                f"**`{q['name']}`** aka {aliases}\n" +
-                quote(
-                  f"**Known handles:**\n" +
-                  handles +
-                  f"**Short reason:** {short}" +
-                  long
+                await message.channel.send(
+                  f"**`{q['name']}`** aka {aliases}\n" +
+                  quote(
+                    f"**Known handles:**\n" +
+                    handles +
+                    f"**Short reason:** {short}" +
+                    long
+                  )
                 )
-              )
+              else:
+                await message.channel.send("No such user.\nTry `blacklist list` first.")
             else:
-              await message.channel.send("No such user.\nTry `blacklist list` first.")
-          else:
-            await message.channel.send("Syntax: `blacklist view <entry> [long]`")
+              await message.channel.send("Syntax: `blacklist view <entry> [long]`")
 
+        else:
+          await message.channel.send(
+            "Available `blacklist` commands:\n" +
+            "• `blacklist add <json>`\n" +
+            "• `blacklist list [page number]`\n" +
+            "• `blacklist view <entry> [long]`"
+          )
       else:
         await message.channel.send(
-          "Available `blacklist` commands:\n" +
-          "• `blacklist add <json>`\n" +
-          "• `blacklist list [page number]`\n" +
-          "• `blacklist view <entry> [long]`"
+          "Available commands:\n" +
+          "• `blacklist`"
         )
     else:
-      await message.channel.send(
-        "Available commands:\n" +
-        "• `blacklist`"
-      )
+      await message.channel.send("What?")
 
   async def post_notice(self, message: str):
     await self._notice_channel.send(message)
