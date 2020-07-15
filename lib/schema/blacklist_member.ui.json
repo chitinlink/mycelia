@@ -1,0 +1,41 @@
+{
+  "name": {
+    "ui:placeholder": "Name",
+    "ui:label": false,
+    "ui:autofocus": true
+  },
+  "aliases": {
+    "items": {
+      "ui:placeholder": "Alias",
+      "ui:autocomplete": "name"
+    }
+  },
+  "urls": {
+    "items": {
+      "ui:label": false,
+      "plain": {
+        "ui:label": false,
+        "ui:placeholder": "https://example.com"
+      },
+      "regex": {
+        "ui:label": false,
+        "ui:placeholder": "^...$"
+      },
+      "twitter": {
+        "ui:label": false,
+        "ui:placeholder": "@username"
+      },
+      "tumblr": {
+        "ui:label": false,
+        "ui:placeholder": "username",
+        "ui:help": "The \"X\" in  \"X.tumblr.com\""
+      }
+    }
+  },
+  "reason": {
+    "ui:label": false,
+    "long": {
+      "ui:widget": "textarea"
+    }
+  }
+}
