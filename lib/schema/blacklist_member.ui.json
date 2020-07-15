@@ -10,7 +10,7 @@
       "ui:autocomplete": "name"
     }
   },
-  "urls": {
+  "handles": {
     "items": {
       "ui:label": false,
       "plain": {

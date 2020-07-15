@@ -15,8 +15,8 @@
         "minimum": 1
       }
     },
-    "urls": {
-      "title": "URLs",
+    "handles": {
+      "title": "Handles",
       "type": "array",
       "items": {
         "type": "object",
