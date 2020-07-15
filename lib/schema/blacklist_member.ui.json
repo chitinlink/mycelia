@@ -19,7 +19,7 @@
       },
       "regex": {
         "ui:label": false,
-        "ui:placeholder": "^...$"
+        "ui:placeholder": "Regular Expression"
       },
       "twitter": {
         "ui:label": false,
