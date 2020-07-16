@@ -5,6 +5,10 @@ import json
 import re
 import sys
 from math import ceil
+from typing import Any
+from functools import reduce
+
+# Local dependencies
 from lib.utils import quote
 
 # External dependencies
@@ -102,24 +106,25 @@ class Biggs(discord.Client):
                 aliases = "/".join(q['aliases'])
                 short = q['reason']['short']
                 handles = ""
-                for h in q['handles']:
-                  _type = list(h)[0]
-                  value = h[list(h)[0]]
-                  handles += "• "
-                  if _type == "plain":
-                    handles += f"<{value}>"
-                  elif _type == "regex":
-                    handles += f"Regular expression: `{value}`"
-                  elif _type == "twitter":
-                    handles += f"{value} - <https://twitter.com/{value[1:]}>"
-                  elif _type == "tumblr":
-                    handles += f"<https://{value}.tumblr.com> / <https://www.tumblr.com/dashboard/blog/{value}>"
-                  handles += "\n"
+                if "handles" in q:
+                  handles += "**Known handles:**\n"
+                  for h in q['handles']:
+                    _type = list(h)[0]
+                    value = h[list(h)[0]]
+                    handles += "• "
+                    if _type == "url":
+                      handles += f"<{value}>"
+                    elif _type == "regex":
+                      handles += f"Regular expression: `{value}`"
+                    elif _type == "twitter":
+                      handles += f"{value} - <https://twitter.com/{value[1:]}>"
+                    elif _type == "tumblr":
+                      handles += f"<https://{value}.tumblr.com> / <https://www.tumblr.com/dashboard/blog/{value}>"
+                    handles += "\n"
 
                 await message.channel.send(
                   f"**`{q['name']}`** aka {aliases}\n" +
                   quote(
-                    f"**Known handles:**\n" +
                     handles +
                     f"**Short reason:** {short}" +
                     long
@@ -145,8 +150,82 @@ class Biggs(discord.Client):
     else:
       await message.channel.send("What?")
 
-  async def post_notice(self, message: str):
-    await self._notice_channel.send(message)
+  async def scan_message(self, message: discord.Message):
+
+    matches = []
+
+    # For each blacklist entry...
+    for member in self._blacklist.all():
+      # ...For each of its handles...
+      if "handles" in member:
+        for h in member["handles"]:
+          # ...If none of the handles match the message, skip
+          _type = list(h)[0]
+          value = h[list(h)[0]]
+          if _type == "url":
+            if not re.search(value, message.content): continue
+          elif _type == "regex":
+            if not re.compile(value).match(message.content): continue
+          elif _type == "twitter":
+            if not (
+                    re.search(value, message.content) or
+                    re.search(f"https://www.twitter.com/{value[1:]}", message.content)
+                  ): continue
+          elif _type == "tumblr":
+            if not (
+                    re.search(value, message.content) or
+                    re.search(f"https://{value}.tumblr.com", message.content) or
+                    re.search(f"https://www.tumblr.com/dashboard/blog/{value}", message.content)
+                  ): continue
+          # Otherwise add to matches
+          matches.append(member)
+
+    # Search for *all* documents...
+    matches += self._blacklist.search(
+      # ... where any of their aliases...
+      where("aliases").any(
+        # ... match any of the words in the message.
+        # ("words" is loosely defined by the regex below,
+        #  which is supposed to catch usernames mostly)
+        re.findall(r"([\w'_]+)", message.content)
+      )
+    )
+
+    # Unique values only
+    out = []
+    for m in matches:
+      if len([i['name'] == m['name'] for i in out]) == 0:
+        out.append(m)
+
+    # If there are any matches:
+    if matches:
+      await self.post_notice(kind="scan_match", data=matches, original_message=message)
+
+  async def post_notice(self, kind: str = "plain", original_message: discord.Message = None, data: Any = None):
+    # Plain message
+    if kind == "plain":
+      await self._notice_channel.send(data)
+
+    # Scan match
+    elif kind == "scan_match":
+      names = "/".join(map(lambda m: f"`{m['name']}`", data))
+
+      entry = "<entry>"
+      if len(data) == 1: entry = data[0]["name"]
+
+      await self._notice_channel.send(
+        f"**Blacklist match:** {names}\n" +
+        f"by {original_message.author.mention} in {original_message.channel.mention}:\n" +
+        quote(original_message.content) + "\n" +
+        f"{original_message.jump_url}\n" +
+        f"Use `blacklist view {entry}` for details"
+      )
+
+    # Unknown?
+    else:
+      exc = f"Unknown post_notice kind: {kind}"
+      log.error(exc)
+      raise ValueError(exc)
 
   async def on_ready(self):
     log.info(f"Logged on as {self.user}!")
@@ -154,7 +233,7 @@ class Biggs(discord.Client):
     self._guild = self.get_guild(self._config["guild_id"])
     self._notice_channel = self.get_channel(self._config["notice_channel_id"])
 
-    # await self.post_notice("Hello")
+    # await self.post_notice(kind="plain", data="I'm ready.")
 
   async def on_message(self, message: discord.Message):
     log.msg(f"{message.channel}§{message.author}: {message.content}")
@@ -167,3 +246,6 @@ class Biggs(discord.Client):
         if self.mentioning_me(message):
           # Process the message as a command
           await self.process_command(message)
+        else: #if message.channel != self._notice_channel:
+          # Scan the message (unless it's in the notice channel)
+          await self.scan_message(message)
