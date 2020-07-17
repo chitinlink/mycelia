@@ -70,7 +70,7 @@ class Biggs(discord.Client):
 
           # blacklist add
           if args[1] == "add":
-            log.debug("Command \"blacklist add\" invoked.")
+            log.info("Command \"blacklist add\" invoked.")
             try:
               member = self.add_blacklist_member(args[2])
               await message.channel.send(f"Added `{member['name']}` to blacklist")
@@ -81,7 +81,7 @@ class Biggs(discord.Client):
 
           # blacklist list
           elif args[1] == "list":
-            log.debug("Command \"blacklist list\" invoked.")
+            log.info("Command \"blacklist list\" invoked.")
             msg = "**Blacklist:**\n\n"
             for i in self._blacklist.all():
               msg += f"`{i['name']}`   "
@@ -90,7 +90,7 @@ class Biggs(discord.Client):
 
           # blacklist view
           elif args[1] == "view":
-            log.debug("Command \"blacklist view\" invoked.")
+            log.info("Command \"blacklist view\" invoked.")
             if len(args) >= 3:
 
               q = self._blacklist.get(where("name") == args[2])
