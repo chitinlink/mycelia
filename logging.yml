@@ -3,11 +3,15 @@ formatters:
   simple:
     format: "%(asctime)s %(name)-16s %(levelname)-8s %(message)s"
     datefmt: "[%Y/%m/%d-%H:%M:%S]"
+  colored:
+    class: colorlog.ColoredFormatter
+    format: "%(blue)s%(asctime)s%(reset)s %(name)-16s %(log_color)s%(levelname)-8s%(reset)s %(message)s"
+    datefmt: "[%Y/%m/%d-%H:%M:%S]"
 handlers:
   console:
     class: logging.StreamHandler
     level: DEBUG
-    formatter: simple
+    formatter: colored
     stream: ext://sys.stdout
   file:
     class: logging.FileHandler
