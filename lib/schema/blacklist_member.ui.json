@@ -13,7 +13,7 @@
   "handles": {
     "items": {
       "ui:label": false,
-      "plain": {
+      "url": {
         "ui:label": false,
         "ui:placeholder": "https://example.com"
       },
