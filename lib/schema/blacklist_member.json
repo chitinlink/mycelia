@@ -25,10 +25,10 @@
           {
             "title": "Plain URL",
             "type": "object",
-            "required": [ "plain" ],
+            "required": [ "url" ],
             "additionalProperties": false,
             "properties": {
-              "plain": { "type": "string", "format": "uri" }
+              "url": { "type": "string", "format": "uri" }
             }
           },
           {
