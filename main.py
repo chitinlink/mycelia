@@ -61,11 +61,11 @@ try:
       open(f"{config['tinydb_path']}db.json", "w", encoding="utf-8")
 
   # Create an instance of Biggs
-  log.debug("Instanciating Biggs...")
+  log.info("Instanciating Biggs...")
   biggs = Biggs()
 
   # Start Biggs
-  log.debug("Starting Biggs...")
+  log.info("Starting Biggs...")
   biggs.setup(config)
 
 # Log exceptions
