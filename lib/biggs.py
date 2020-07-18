@@ -205,7 +205,7 @@ class Biggs(discord.Client):
 
     # Scan match
     elif kind == "scan_match":
-      names = "/".join(map(lambda m: f"`{m['name']}`", data))
+      names = ", ".join(map(lambda m: f"`{m['name']}`", data))
 
       entry = "<entry>"
       if len(data) == 1: entry = data[0]["name"]
