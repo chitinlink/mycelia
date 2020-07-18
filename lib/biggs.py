@@ -192,10 +192,7 @@ class Biggs(discord.Client):
     )
 
     # Unique values only
-    out = []
-    for m in matches:
-      if len([i['name'] == m['name'] for i in out]) == 0:
-        out.append(m)
+    matches = list({ e["name"]: e for e in matches }.values())
 
     # If there are any matches:
     if matches:
