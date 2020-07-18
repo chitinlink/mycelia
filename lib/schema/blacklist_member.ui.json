@@ -1,40 +1,32 @@
 {
   "name": {
+    "ui:title": "Name",
     "ui:placeholder": "Name",
-    "ui:label": false,
     "ui:autofocus": true
   },
   "aliases": {
+    "ui:title": "Aliases",
+    "ui:help": "Note that the Name does not count as an alias. You may want to have it here as well.",
     "items": {
       "ui:placeholder": "Alias",
       "ui:autocomplete": "name"
     }
   },
   "handles": {
+    "ui:title": "Handles",
     "items": {
-      "ui:label": false,
-      "url": {
-        "ui:label": false,
-        "ui:placeholder": "https://example.com"
+      "type": {
+        "ui:placeholder": "Choose one",
+        "ui:label": false
       },
-      "regex": {
-        "ui:label": false,
-        "ui:placeholder": "Regular Expression"
-      },
-      "twitter": {
-        "ui:label": false,
-        "ui:placeholder": "@username"
-      },
-      "tumblr": {
-        "ui:label": false,
-        "ui:placeholder": "username",
-        "ui:help": "The \"X\" in  \"X.tumblr.com\""
-      }
+      "handle": { "ui:label": false }
     }
   },
   "reason": {
-    "ui:label": false,
+    "ui:title": false,
+    "short": { "ui:title": "Short reason" },
     "long": {
+      "ui:title": "Long reason",
       "ui:widget": "textarea"
     }
   }
