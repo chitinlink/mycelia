@@ -229,6 +229,7 @@ class Biggs(discord.Client):
 
     self._guild = self.get_guild(self._config["guild_id"])
     self._notice_channel = self.get_channel(self._config["notice_channel_id"])
+    self._ignored_channels = [self.get_channel(c) for c in self._config["ignored_channels"]] + [self._notice_channel]
 
     # await self.post_notice(kind="plain", data="I'm ready.")
 
@@ -237,12 +238,19 @@ class Biggs(discord.Client):
 
     # Ignore if the bot isn't ready
     if self.is_ready():
-      # Ignore unless it's in the correct server, and not from a bot (incl. Biggs)
-      if message.guild == self._guild and not message.author.bot:
+      # Ignore unless:
+      if (
+        # it's in the correct server
+        message.guild == self._guild and
+        # and it's not from a bot (incl. Biggs)
+        not message.author.bot and
+        # and it's not in an ignored channel
+        message.channel not in self._ignored_channels
+      ):
         # Check if we're being mentioned
         if self.mentioning_me(message):
           # Process the message as a command
           await self.process_command(message)
-        else: #if message.channel != self._notice_channel:
+        else:
           # Scan the message (unless it's in the notice channel)
           await self.scan_message(message)

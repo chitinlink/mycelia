@@ -5,6 +5,9 @@ token: NzMyMTUwODI2MDc1Njg0ODg0.Xwwarw.hVMCFi9qDL3bGH3PxhVZI210TG4
 guild_id: 144870693983485952 # Bodiam
 # Channel the bot sends administrative notices to
 notice_channel_id: 732236293207228437 # bot-test
+# Channels the bot does not monitor
+ignored_channels:
+  - 535870057839067137 # congress-hall (Example)
 
 # Path for TinyDB database folder
 tinydb_path: "./data/"
