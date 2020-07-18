@@ -167,16 +167,16 @@ class Biggs(discord.Client):
           elif _type == "regex":
             if not re.compile(value).match(message.content): continue
           elif _type == "twitter":
-            if not (
-                    re.search(value, message.content) or
-                    re.search(f"https://www.twitter.com/{value[1:]}", message.content)
-                  ): continue
+            if not (re.search(
+              re.compile(f"((https?://)?(mobile.)?twitter.com/)?{value[1:]}|{value}"),
+              message.content
+            )): continue
           elif _type == "tumblr":
             if not (
-                    re.search(value, message.content) or
-                    re.search(f"https://{value}.tumblr.com", message.content) or
-                    re.search(f"https://www.tumblr.com/dashboard/blog/{value}", message.content)
-                  ): continue
+              re.search(value, message.content) or
+              re.search(f"(https?://)?{value}.tumblr(.com)?", message.content) or
+              re.search(f"(https?://)?(www.)?tumblr.com/blog/view/{value}", message.content)
+            ): continue
           # Otherwise add to matches
           matches.append(member)
 
