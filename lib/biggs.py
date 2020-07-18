@@ -95,16 +95,9 @@ class Biggs(discord.Client):
 
               q = self._blacklist.get(where("name") == args[2])
 
-              long = ""
-              if len(args) >= 4 and args[3] == "long":
-                long += "\n**Long reason:**\n"
-                long += q['reason']['long']
-              else:
-                long += f"\nUse `blacklist view {q['name']} long` to view the long reason."
-
               if q != "":
-                aliases = "/".join(q['aliases'])
-                short = q['reason']['short']
+                aliases = ", ".join(q["aliases"])
+                short = q["reason"]["short"]
                 handles = ""
                 if "handles" in q:
                   handles += "**Known handles:**\n"
@@ -126,21 +119,22 @@ class Biggs(discord.Client):
                   f"**`{q['name']}`** aka {aliases}\n" +
                   quote(
                     handles +
-                    f"**Short reason:** {short}" +
-                    long
+                    f"**Short reason:** {short}\n" +
+                    "**Long reason:**||\n" +
+                    f"{q['reason']['long']}||"
                   )
                 )
               else:
                 await message.channel.send("No such user.\nTry `blacklist list` first.")
             else:
-              await message.channel.send("Syntax: `blacklist view <entry> [long]`")
+              await message.channel.send("Syntax: `blacklist view <entry>`")
 
         else:
           await message.channel.send(
             "Available `blacklist` commands:\n" +
             "• `blacklist add <json>`\n" +
-            "• `blacklist list [page number]`\n" +
-            "• `blacklist view <entry> [long]`"
+            "• `blacklist list`\n" +
+            "• `blacklist view <entry>`"
           )
       else:
         await message.channel.send(
