@@ -33,10 +33,6 @@ class Biggs(discord.Client):
 
     self.run(config["token"])
 
-  def mentioning_me(self, message: discord.Message) -> bool:
-    """ Returns true if Biggs is mentioned in the given message. """
-    return self.user in message.mentions
-
   def remove_mention(self, message: str) -> str:
     """ Intended to be used on messages mentioning Biggs,
         removes the mention(s) and returns the remaining text. """
@@ -242,7 +238,7 @@ class Biggs(discord.Client):
         message.channel not in self._ignored_channels
       ):
         # Check if we're being mentioned
-        if self.mentioning_me(message):
+        if self.user in message.mentions:
           # Process the message as a command
           await self.process_command(message)
         else:
