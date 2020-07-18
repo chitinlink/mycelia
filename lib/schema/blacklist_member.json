@@ -3,78 +3,49 @@
   "required": [ "name", "aliases", "reason" ],
   "additionalProperties": false,
   "properties": {
-    "name": {
-      "title": "Name",
-      "type": "string"
-    },
+    "name": { "type": "string", "pattern": "^[a-z0-9_]+$" },
     "aliases": {
-      "title": "Aliases",
       "type": "array",
-      "items": {
-        "type": "string",
-        "minimum": 1
-      }
+      "items": { "type": "string", "minimum": 1, "pattern": "^[a-z0-9_]+$" }
     },
     "handles": {
-      "title": "Handles",
       "type": "array",
       "items": {
         "type": "object",
         "minimum": 0,
-        "anyOf": [
+        "required": ["type", "handle"],
+        "additionalProperties": false,
+        "properties": {
+          "type": { "type": "string", "enum": ["url", "regex", "twitter", "tumblr"] },
+          "handle": { "type": "string" }
+        },
+        "allOf": [
           {
-            "title": "Plain URL",
-            "type": "object",
-            "required": [ "url" ],
-            "additionalProperties": false,
-            "properties": {
-              "url": { "type": "string", "format": "uri" }
-            }
+            "if": { "properties": { "type": { "const": "url" } } },
+            "then": { "properties": { "handle": { "type": "string", "format": "uri" } } }
           },
           {
-            "title": "Regular Expression",
-            "type": "object",
-            "required": [ "regex" ],
-            "additionalProperties": false,
-            "properties": {
-              "regex": { "type": "string", "format": "regex" }
-            }
+            "if": { "properties": { "type": { "const": "regex" } } },
+            "then": { "properties": { "handle": { "type": "string", "format": "regex" } } }
           },
           {
-            "title": "Twitter username",
-            "type": "object",
-            "required": [ "twitter" ],
-            "additionalProperties": false,
-            "properties": {
-              "twitter": { "type": "string", "pattern": "^@[a-zA-Z_0-9]+$" }
-            }
+            "if": { "properties": { "type": { "const": "twitter" } } },
+            "then": { "properties": { "handle": { "type": "string", "pattern": "^@[a-zA-Z_0-9]+$" } } }
           },
           {
-            "title": "Tumblr username",
-            "type": "object",
-            "required": [ "tumblr" ],
-            "additionalProperties": false,
-            "properties": {
-              "tumblr": { "type": "string" }
-            }
+            "if": { "properties": { "type": { "const": "tumblr" } } },
+            "then": { "properties": { "handle": { "type": "string", "pattern": "^[a-zA-Z0-9_-]+$" } } }
           }
         ]
       }
     },
     "reason": {
-      "title": "Reason",
       "type": "object",
       "additionalProperties": false,
       "required": ["short", "long"],
       "properties": {
-        "short": {
-          "title": "Short reason",
-          "type": "string"
-        },
-        "long": {
-          "title": "Full reason",
-          "type": "string"
-        }
+        "short": { "type": "string", "maxLength": 100 },
+        "long": { "type": "string" }
       }
     }
   }

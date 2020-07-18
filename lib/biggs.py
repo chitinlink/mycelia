@@ -109,8 +109,8 @@ class Biggs(discord.Client):
                 if "handles" in q:
                   handles += "**Known handles:**\n"
                   for h in q['handles']:
-                    _type = list(h)[0]
-                    value = h[list(h)[0]]
+                    _type = h["type"]
+                    value = h["handle"]
                     handles += "• "
                     if _type == "url":
                       handles += f"<{value}>"
@@ -160,8 +160,8 @@ class Biggs(discord.Client):
       if "handles" in member:
         for h in member["handles"]:
           # ...If none of the handles match the message, skip
-          _type = list(h)[0]
-          value = h[list(h)[0]]
+          _type = h["type"]
+          value = h["handle"]
           if _type == "url":
             if not re.search(value, message.content): continue
           elif _type == "regex":
