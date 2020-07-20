@@ -10,6 +10,18 @@ mod_roles:
   - 542802661884428288 # Politburo
   - 144871784619966464 # Central Committee
 
+self_assignable_roles:
+  # Pronouns
+  - 450081493591654400 # they/them
+  - 685214929006886986 # it/its
+  - 450081394916327459 # he/him
+  - 450081610058956802 # she/her
+  - 520408382939856936 # any pronouns
+  - 734693039972286516 # no pronouns
+  # Other stuff
+  - 669700746819797026 # Jackbox
+  - 702285837714456577 # Tower Unite
+
 # Server the bot operates in
 guild_id: 144870693983485952 # Bodiam
 # Channel the bot sends administrative notices to
