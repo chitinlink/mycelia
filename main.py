@@ -62,7 +62,7 @@ try:
 
   # Create an instance of Biggs
   log.info("Instanciating Biggs...")
-  biggs = Biggs()
+  biggs = Biggs(command_prefix=config["command_prefix"])
 
   # Start Biggs
   log.info("Starting Biggs...")
