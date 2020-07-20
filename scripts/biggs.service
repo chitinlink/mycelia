@@ -4,12 +4,8 @@ Description=Biggs (Discord bot)
 [Service]
 Type=simple
 WorkingDirectory=/opt/biggs/
-ExecStart=./main.py
-# -----
+ExecStart=/bin/bash -c 'python3 ./main.py'
 Restart=on-failure
-# StandardInput=socket
-# StandardOutput=journal
-# StandardError=journal
 # Security
 PrivateUsers=true
 ProtectHome=true
