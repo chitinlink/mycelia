@@ -15,9 +15,10 @@ from discord.ext import tasks, commands
 # Local dependencies
 from lib.utils import quote
 # Services
+from lib.services.funnel import Funnel
 from lib.services.log_message import log_message
 from lib.services.blacklist import Blacklist
-from lib.services.funnel import Funnel
+from lib.services.role import Role
 
 # Logging
 log = logging.getLogger("Biggs")
@@ -42,6 +43,7 @@ class Biggs(commands.Bot):
 
     # Commands
     self.add_cog(Blacklist(self))
+    self.add_cog(Role(self))
 
     # Listeners
     self.add_listener(log_message, "on_message")
