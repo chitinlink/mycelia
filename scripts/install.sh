@@ -6,9 +6,15 @@ cd "${0%/*}"
 # Set everything here to executable
 chmod +x *
 
-# Link
-sudo systemctl link ./biggs.service
+# Go back up, now we're in /
+cd ..
+# Install python packages
+pip3 install -r requirements.txt
 
-# Reload and enable
+# Link
+sudo systemctl link ./scripts/biggs.service
+
+# Reload, enable, start
 sudo systemctl daemon-reload
 sudo systemctl enable biggs.service
+sudo systemctl start biggs.service
