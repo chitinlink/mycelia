@@ -16,7 +16,7 @@ You need [Python 3].
 2. Fill out `biggs.yml`.  
 
     You need to create a [Discord Application][discord-apps], enable a bot for it, and get its token.  
-    You can get guild and channel IDs by right-clicking them with Developer Mode enabled.  
+    You can get guild, channel, and role IDs by right-clicking them with Developer Mode enabled.  
     The bot keeps logs and a database at `./logs/` and `./data/db.json` by default.
 
 3. Run `main.py`:
