@@ -1,6 +1,15 @@
 # Discord Bot token
 token: NzMyMTUwODI2MDc1Njg0ODg0.Xwwarw.hVMCFi9qDL3bGH3PxhVZI210TG4
 
+# Prefix for commands
+command_prefix: ","
+
+# Roles considered "moderator" roles for restricting access to commands
+mod_roles:
+  - 144871781646336000 # General Secretary
+  - 542802661884428288 # Politburo
+  - 144871784619966464 # Central Committee
+
 # Server the bot operates in
 guild_id: 144870693983485952 # Bodiam
 # Channel the bot sends administrative notices to
@@ -13,5 +22,3 @@ ignored_channels:
 tinydb_path: "./data/"
 # Path for logs folder
 logs_path: "./logs/"
-
-# TODO some way of telling it what roles/users are trusted
