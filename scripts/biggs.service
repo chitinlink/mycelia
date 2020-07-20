@@ -1,0 +1,22 @@
+[Unit]
+Description=Biggs (Discord bot)
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/biggs/
+ExecStart=./main.py
+# -----
+Restart=on-failure
+# StandardInput=socket
+# StandardOutput=journal
+# StandardError=journal
+# Security
+PrivateUsers=true
+ProtectHome=true
+ProtectSystem=full
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+
+[Install]
+WantedBy=multi-user.target
