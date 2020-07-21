@@ -26,6 +26,7 @@ log = logging.getLogger("Biggs")
 class Biggs(commands.Bot):
   def setup(self, config: dict):
     self._config = config
+    self._done_setup = False
 
     self._db = TinyDB(f"{config['tinydb_path']}db.json")
     self._blacklist = self._db.table("blacklist")
@@ -33,21 +34,25 @@ class Biggs(commands.Bot):
     self.run(config["token"])
 
   async def on_ready(self):
-    # Internal props
-    self._guild = self.get_guild(self._config["guild_id"])
-    self._notice_channel = self.get_channel(self._config["notice_channel_id"])
-    self._ignored_channels = [self.get_channel(c) for c in self._config["ignored_channels"]] + [self._notice_channel]
+    if not self._done_setup:
+      # Internal props
+      self._guild = self.get_guild(self._config["guild_id"])
+      self._notice_channel = self.get_channel(self._config["notice_channel_id"])
+      self._ignored_channels = [self.get_channel(c) for c in self._config["ignored_channels"]] + [self._notice_channel]
 
-    # Command funnel -- do not remove this
-    self.add_cog(Funnel(self))
+      # Command funnel -- do not remove this
+      self.add_cog(Funnel(self))
 
-    # Commands
-    self.add_command(version)
-    self.add_cog(Blacklist(self))
-    self.add_cog(Role(self))
+      # Commands
+      self.add_command(version)
+      self.add_cog(Blacklist(self))
+      self.add_cog(Role(self))
 
-    # Listeners
-    self.add_listener(log_message, "on_message")
+      # Listeners
+      self.add_listener(log_message, "on_message")
+
+      self._done_setup = True
+      log.info("Initial setup done.")
 
     # Done loading
     log.info(f"Logged on as {self.user}!")
