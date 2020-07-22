@@ -16,7 +16,7 @@ git checkout -- .
 
 # Pull latest
 echo "Pulling latest version..."
-git Pull
+git pull
 
 # Install
 echo "Running install script..."
