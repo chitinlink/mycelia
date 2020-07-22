@@ -8,7 +8,6 @@ from lib.utils import quote
 class Role(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
-    self.log = logging.getLogger("Biggs")
     self._roles = list(map(
       lambda id: self.bot._guild.get_role(id),
       self.bot._config["self_assignable_roles"]))

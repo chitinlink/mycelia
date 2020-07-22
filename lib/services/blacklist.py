@@ -10,8 +10,6 @@ import jsonschema
 from lib.utils import quote
 from lib.services.funnel import funnel
 
-log = logging.getLogger("Biggs")
-
 class Blacklist(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
@@ -31,8 +29,6 @@ class Blacklist(commands.Cog):
   async def add(self, ctx: commands.Context, *, member_json: str):
     """ Adds an entry to the blacklist """
 
-    log.info("Command \"blacklist add\" invoked.")
-
     try:
       # Parse JSON from string
       data = json.loads(member_json)
@@ -51,8 +47,6 @@ class Blacklist(commands.Cog):
   @blacklist.command(aliases=["v"])
   async def view(self, ctx: commands.Context, entry: str):
     """ View entry in the blacklist """
-
-    log.info("Command \"blacklist view\" invoked.")
 
     q = self._blacklist.get(where("name") == entry)
 
@@ -92,8 +86,6 @@ class Blacklist(commands.Cog):
   @blacklist.command(aliases=["l"])
   async def list(self, ctx: commands.Context):
     """ List everything in the blacklist """
-
-    log.info("Command \"blacklist list\" invoked.")
 
     msg = "**Blacklist:**\n\n"
     for i in self._blacklist.all():

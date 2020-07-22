@@ -14,6 +14,11 @@ logging.Logger.msg = msg
 async def log_message(message: Message):
   log.msg(f"{message.channel}§{message.author}: {message.content}")
 
+# Basically a listener
+async def log_command(ctx):
+  log.info(f"Command invoked: {ctx.command.qualified_name}")
+  return True
+
 @commands.command(aliases=["v", "hello"])
 async def version(ctx):
   _hash = subprocess.check_output(
