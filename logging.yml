@@ -13,6 +13,12 @@ handlers:
     level: DEBUG
     formatter: colored
     stream: ext://sys.stdout
+  colored_tail:
+    class: logging.FileHandler
+    filename: ./logs/tail
+    level: DEBUG
+    formatter: colored
+    encoding: utf-8
   file:
     class: logging.FileHandler
     filename: ./logs/latest.log
@@ -22,11 +28,8 @@ handlers:
 loggers:
   Biggs:
     level: DEBUG
-    handlers: [console, file]
+    handlers: [console, file, colored_tail]
     propagate: no
-  root:
-    level: DEBUG
-    handlers: [console, file]
   discord:
     level: INFO
-    handlers: [console, file]
+    handlers: [console, file, colored_tail]

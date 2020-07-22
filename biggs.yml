@@ -33,4 +33,5 @@ ignored_channels:
 # Path for TinyDB database folder
 tinydb_path: "./data/"
 # Path for logs folder
+# Make sure to change this in logging.yml as well
 logs_path: "./logs/"

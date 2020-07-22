@@ -21,10 +21,6 @@ try:
     if not os.path.exists(config["logs_path"]):
       os.makedirs(config["logs_path"])
 
-    # Make sure logs/latest.log exists
-    if not os.path.exists(path_latest):
-      open(path_latest, "w", encoding="utf-8")
-
     # If logs/latest.log exists, archive it
     else:
       with open(path_latest, "r", encoding="utf8") as f:
@@ -56,9 +52,6 @@ try:
     # Make sure data/ exists
     if not os.path.exists(f"{config['tinydb_path']}"):
       os.makedirs(f"{config['tinydb_path']}")
-    # Make sure data/db.json exists
-    if not os.path.exists(f"{config['tinydb_path']}db.json"):
-      open(f"{config['tinydb_path']}db.json", "w", encoding="utf-8")
 
   # Create an instance of Biggs
   log.info("Instanciating Biggs...")
