@@ -20,7 +20,7 @@ async def version(ctx):
     "git rev-parse --short HEAD".split(" ")
   ).decode("utf-8").strip()
   _date = subprocess.check_output(
-    "git log -1 --date=format:%Y/%m/%d --format=%ad".split(" ")
+    "git log -1 --date=relative --format=%ad".split(" ")
   ).decode("utf-8").strip()
   await ctx.send(
     f"Biggs (commit `{_hash}`) -- Last updated {_date}"
