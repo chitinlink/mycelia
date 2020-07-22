@@ -50,7 +50,7 @@ class Blacklist(commands.Cog):
 
     q = self._blacklist.get(where("name") == entry)
 
-    if q != "":
+    if q:
       aliases = ", ".join(q["aliases"])
       short = q["reason"]["short"]
       handles = ""
@@ -148,4 +148,3 @@ class Blacklist(commands.Cog):
             kind="scan_match",
             data=matches,
             original_message=message)
-
