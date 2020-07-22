@@ -15,5 +15,5 @@ pip3 install -r requirements.txt
 systemctl --user link ./scripts/biggs.service
 
 # Reload, enable & start
-systemctl daemon-reload
-systemctl enable biggs.service --now
+systemctl --user daemon-reload
+systemctl --user enable biggs.service --now

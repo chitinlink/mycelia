@@ -8,12 +8,12 @@ ExecStart=/bin/bash -c 'python3 ./main.py'
 Restart=on-failure
 Environment=PYTHONUNBUFFERED=1
 # Security
-PrivateUsers=true
-ProtectHome=true
-ProtectSystem=full
-ProtectControlGroups=true
-ProtectKernelModules=true
-ProtectKernelTunables=true
+# PrivateUsers=true
+# ProtectHome=true
+# ProtectSystem=full
+# ProtectControlGroups=true
+# ProtectKernelModules=true
+# ProtectKernelTunables=true
 
 [Install]
 WantedBy=multi-user.target
