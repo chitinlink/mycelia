@@ -11,12 +11,9 @@ cd ..
 # Install python packages
 pip3 install -r requirements.txt
 
-# Go back down
-cd ./scripts
-
 # Link systemd service
-sudo systemctl --user link ./scripts/biggs.service
+systemctl --user link ./scripts/biggs.service
 
 # Reload, enable & start
-sudo systemctl daemon-reload
-sudo systemctl enable biggs.service --now
+systemctl daemon-reload
+systemctl enable biggs.service --now
