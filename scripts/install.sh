@@ -6,10 +6,13 @@ cd "${0%/*}"
 # Set everything here to executable
 chmod +x *
 
-# Go back up, now we're in /
+# Go up, now we're in /
 cd ..
 # Install python packages
 pip3 install -r requirements.txt
+
+# Go back down
+cd ./scripts
 
 # Link systemd service
 sudo systemctl --user link ./scripts/biggs.service
