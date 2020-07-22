@@ -12,7 +12,7 @@ cd ..
 pip3 install -r requirements.txt
 
 # Link systemd service
-sudo systemctl link ./scripts/biggs.service --user
+sudo systemctl --user link ./scripts/biggs.service
 
 # Reload, enable & start
 sudo systemctl daemon-reload
