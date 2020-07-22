@@ -44,7 +44,7 @@ The bot keeps logs and a database at `./logs/` and `./data/db.json` by default.
 sh ./scripts/install.sh
 ```
     
-This will install the required Python modules and register Biggs as a [systemd user unit][systemd-user].
+This will install the required Python modules and register Biggs as a [systemd user unit][systemd-user]. It also tells systemd that it's working directory is the current one, so edit it (`./scripts/biggs.service`) if you move this folder.
 
 ⚠️ **WARNING**:  
 Because this is a user unit, it'll shut down once your user is logged out. To prevent this, enable user-linger:
@@ -57,7 +57,7 @@ loginctl enable-linger $USER
 
 * Unit status: `systemctl --user status biggs.service` 
 * Unit logs: `journalctl --user -u biggs.service`
-* Tail logs: `tail -f ./logs/latest.log`
+* Live logs: `tail -f ./logs/latest.log`
 
 ### Updating
 
