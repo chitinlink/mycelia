@@ -23,11 +23,11 @@ class Blacklist(commands.Cog):
     return self.bot.is_mod(ctx.author)
 
   # Commands
-  @commands.group()
+  @commands.group(aliases=["bl"])
   async def blacklist(self, ctx: commands.Context):
     if ctx.invoked_subcommand is None: pass
 
-  @blacklist.command()
+  @blacklist.command(aliases=["a"])
   async def add(self, ctx: commands.Context, *, member_json: str):
     """ Adds an entry to the blacklist """
 
@@ -48,7 +48,7 @@ class Blacklist(commands.Cog):
     except json.decoder.JSONDecodeError as exc:
       await ctx.send(f"Error: {exc.msg}")
 
-  @blacklist.command()
+  @blacklist.command(aliases=["v"])
   async def view(self, ctx: commands.Context, entry: str):
     """ View entry in the blacklist """
 
@@ -89,7 +89,7 @@ class Blacklist(commands.Cog):
     else:
       await ctx.send("No such user.\nTry `blacklist list` first.")
 
-  @blacklist.command()
+  @blacklist.command(aliases=["l"])
   async def list(self, ctx: commands.Context):
     """ List everything in the blacklist """
 

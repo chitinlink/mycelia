@@ -13,23 +13,23 @@ class Role(commands.Cog):
       lambda id: self.bot._guild.get_role(id),
       self.bot._config["self_assignable_roles"]))
 
-  @commands.group()
+  @commands.group(aliases=["r"])
   async def role(self, ctx):
     if ctx.invoked_subcommand is None: pass
 
-  @role.command()
+  @role.command(aliases=["a"])
   async def add(self, ctx, *, role: dRole):
     """ Assign yourself a role """
     if role in self._roles:
       await ctx.author.add_roles(role)
 
-  @role.command()
+  @role.command(aliases=["r"])
   async def remove(self, ctx, *, role: dRole):
     """ Remove a role you have """
     if role in self._roles:
       await ctx.author.remove_roles(role)
 
-  @role.command()
+  @role.command(aliases=["l"])
   async def list(self, ctx):
     """ List all the self-assignable and requestable roles """
     await ctx.send(
