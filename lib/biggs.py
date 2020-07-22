@@ -60,7 +60,7 @@ class Biggs(commands.Bot):
 
   def is_mod(self, member: discord.Member) -> bool:
     """ Checks whether or not the given member is a moderator based on their roles """
-    return len(set(member.roles) & set(self._config["mod_roles"])) > 0
+    return len(set(map(lambda r: r.id, member.roles)) & set(self._config["mod_roles"])) > 0
 
   async def post_notice(self, kind: str = "plain", original_message: discord.Message = None, data: Any = None):
     # Plain message
