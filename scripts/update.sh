@@ -1,10 +1,25 @@
 #!/usr/bin/env bash
 
-# Stop
-sudo systemctl stop biggs.service
+# Make sure we're in /scripts/
+cd "${0%/*}"
 
-# Then pull
-git pull
+# Uninstall
+echo "Running uninstall script..."
+sh ./uninstall.sh
 
-# Then resume
-sudo systemctl start biggs.service
+# Go back up
+cd ..
+
+# Discard changes
+echo "Discarding changes..."
+git checkout -- .
+
+# Pull latest
+echo "Pulling latest version..."
+git Pull
+
+# Install
+echo "Running install script..."
+sh ./scripts/install.sh
+
+echo "Done updating!"

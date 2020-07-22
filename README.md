@@ -43,7 +43,18 @@ loginctl enable-linger $USER
 * Unit logs: `journalctl --user -u biggs.service`
 * Tail logs: `tail -f ./logs/latest.log`
 
+### Updating
+
+⚠️ **Back up `biggs.yml`** (and any other changes you want to keep) before updating.
+
+Once you have, this script will essentially uninstall, pull the latest version, and then reinstall:
+```sh
+./scripts/update.sh
+```
+
 ### Uninstalling
+
+This script stops and unregisters the systemd unit:
 
 ```sh
 ./scripts/uninstall.sh
