@@ -42,7 +42,7 @@
     "reason": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["short", "long"],
+      "required": ["short"],
       "properties": {
         "short": { "type": "string", "maxLength": 100 },
         "long": { "type": "string" }
