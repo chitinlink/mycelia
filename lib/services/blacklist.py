@@ -100,8 +100,8 @@ class Blacklist(commands.Cog):
     # Run the message through the funnel first
     if funnel(self.bot, message):
       # Make sure it's not a blacklist command
-      if not message.content.startswith(
-        self.bot._config["command_prefix"] + "blacklist"):
+      ctx = await self.bot.get_context(message)
+      if not (ctx.command and ctx.command.qualified_name == "blacklist"):
 
         matches = []
 
