@@ -57,7 +57,7 @@ loginctl enable-linger $USER
 
 * Unit status: `systemctl --user status biggs.service` 
 * Unit logs: `journalctl --user -u biggs.service`
-* Live logs: `tail -f ./logs/latest.log`
+* Live logs: `tail -f ./logs/tail`
 
 ### Updating
 
