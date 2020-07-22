@@ -14,6 +14,22 @@ Bodiam moderation bot, written in Python 3, using [discord.py] and [TinyDB].
 
 You need [Python 3].
 
+You can install the requirements with:
+```
+pip3 install -r requirements.txt
+```
+
+And then run the bot:
+
+```sh
+# Normally:
+python3 main.py
+# On Windows:
+py -3 main.py
+```
+
+But you also have the option of installing the bot as a systemd service.
+
 ### Installing
 
 #### 1. Fill out `biggs.yml`.  
