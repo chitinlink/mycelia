@@ -9,9 +9,14 @@ chmod +x *
 
 # Go up, now we're in /
 cd ..
+
 # Install python packages
 echo "Installing python requirements..."
 pip3 install -r requirements.txt
+
+# Set systemd service WorkingDirectory to current dir
+echo "Setting systemd working directory to ${PWD}..."
+sed -i "s/^WorkingDirectory=.*/WorkingDirectory=${PWD}/" ./biggs.service
 
 # Link systemd service
 echo "Linking systemd service..."
