@@ -41,7 +41,6 @@ class Biggs(commands.Bot):
       self._ignored_channels = [self.get_channel(c) for c in self._config["ignored_channels"]] + [self._notice_channel]
 
       def parse_reactions(_id):
-        print(_id)
         if type(_id) == int: return self.get_emoji(_id)
         if type(_id) == str: return _id
         raise ValueError("Only str or int allowed in the reactions.")
