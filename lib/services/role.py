@@ -21,12 +21,18 @@ class Role(commands.Cog):
     """ Assign yourself a role """
     if role in self._roles:
       await ctx.author.add_roles(role)
+      await ctx.message.add_reaction(self.bot._reactions["confirm"])
+    else:
+      await ctx.message.add_reaction(self.bot._reactions["deny"])
 
   @role.command(aliases=["r"])
   async def remove(self, ctx, *, role: dRole):
     """ Remove a role you have """
     if role in self._roles:
       await ctx.author.remove_roles(role)
+      await ctx.message.add_reaction(self.bot._reactions["confirm"])
+    else:
+      await ctx.message.add_reaction(self.bot._reactions["deny"])
 
   @role.command(aliases=["l"])
   async def list(self, ctx):

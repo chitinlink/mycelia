@@ -30,6 +30,13 @@ notice_channel_id: 732236293207228437 # bot-test
 ignored_channels:
   - 535870057839067137 # congress-hall (Example)
 
+# Emoji for command feedback.
+# Use the ID (number)
+reactions:
+  header: 514095248851599361 # Coat_Arms
+  confirm: "\U00002705" # :white_check_mark:
+  deny: "\U0000274c" # :x:
+
 # Path for TinyDB database folder
 tinydb_path: "./data/"
 # Path for logs folder
