@@ -15,8 +15,7 @@ from discord.ext import tasks, commands
 # Local dependencies
 from lib.utils import quote
 # Services
-from lib.services.funnel import Funnel
-from lib.services.misc import log_message, version, log_command
+from lib.services.core import Core
 from lib.services.blacklist import Blacklist
 from lib.services.role import Role
 
@@ -47,15 +46,10 @@ class Biggs(commands.Bot):
 
       self._reactions = { key: parse_reactions(_id) for key, _id in self._config["reactions"].items() }
 
-      # Command funnel -- do not remove this
-      self.add_cog(Funnel(self))
-
-      # Logging
-      self.add_listener(log_message, "on_message")
-      self.add_check(log_command)
+      # Bot internals -- do not remove this
+      self.add_cog(Core(self))
 
       # Commands
-      self.add_command(version)
       self.add_cog(Blacklist(self))
       self.add_cog(Role(self))
 

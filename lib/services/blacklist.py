@@ -8,7 +8,7 @@ from tinydb import where
 import jsonschema
 
 from lib.utils import quote
-from lib.services.funnel import funnel
+from lib.services.core import funnel
 
 class Blacklist(commands.Cog):
   def __init__(self, bot):
