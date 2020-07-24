@@ -14,6 +14,7 @@ class Role(commands.Cog):
 
   @commands.group(aliases=["r"])
   async def role(self, ctx):
+    """ Manage your roles """
     if ctx.invoked_subcommand is None: pass
 
   @role.command(aliases=["a"])

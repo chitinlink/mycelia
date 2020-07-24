@@ -23,6 +23,7 @@ class Blacklist(commands.Cog):
   # Commands
   @commands.group(aliases=["bl"])
   async def blacklist(self, ctx: commands.Context):
+    """ Restricted to moderators """
     if ctx.invoked_subcommand is None: pass
 
   @blacklist.command(aliases=["a"])
