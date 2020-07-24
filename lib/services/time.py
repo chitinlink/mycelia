@@ -91,7 +91,7 @@ class Time(commands.Cog):
       try:
         utc_offset = tztable[tz]
       except KeyError as exc:
-        await ctx.send(f"Timezone \"{exc}\" not found.")
+        await ctx.send(f"Timezone {exc} not found.")
         return
 
       if match[2]:
