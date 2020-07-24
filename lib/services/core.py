@@ -28,6 +28,20 @@ class Core(commands.Cog):
   def __init__(self, bot):
     self.bot = bot
 
+  @commands.command(aliases=["v", "hello"])
+  async def version(self, ctx):
+    """ Display current bot version. """
+    _hash = subprocess.check_output(
+      "git rev-parse --short HEAD".split(" ")
+    ).decode("utf-8").strip()
+    _date = subprocess.check_output(
+      "git log -1 --date=relative --format=%ad".split(" ")
+    ).decode("utf-8").strip()
+    await ctx.send(
+      f"{self.bot._reactions['header']} Biggs (commit `{_hash}`) -- Last updated {_date}"
+    )
+
+  # Global check
   async def bot_check(self, ctx) -> bool:
     # Log all commands invoked
     log.info(f"Command invoked: {ctx.command.qualified_name}")
@@ -39,14 +53,6 @@ class Core(commands.Cog):
     # Log messages
     log.msg(f"{message.channel}§{message.author}: {message.content}")
 
-  @commands.command(aliases=["v", "hello"])
-  async def version(self, ctx):
-    _hash = subprocess.check_output(
-      "git rev-parse --short HEAD".split(" ")
-    ).decode("utf-8").strip()
-    _date = subprocess.check_output(
-      "git log -1 --date=relative --format=%ad".split(" ")
-    ).decode("utf-8").strip()
-    await ctx.send(
-      f"{self.bot._reactions['header']} Biggs (commit `{_hash}`) -- Last updated {_date}"
-    )
+  @commands.Cog.listener(name="on_command_error")
+  async def log_error(self, ctx, error):
+    log.warning(f"Command error ({error.__class__.__name__}): {error}")

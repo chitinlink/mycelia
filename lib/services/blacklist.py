@@ -37,12 +37,12 @@ class Blacklist(commands.Cog):
       # Submit validated JSON
       self._blacklist.insert(data)
 
+      await ctx.message.add_reaction(self.bot._reactions["confirm"])
       await ctx.send(f"Added `{data['name']}` to blacklist")
 
-    except jsonschema.exceptions.ValidationError as exc:
-      await ctx.send(f"Error: {exc.message}")
-    except json.decoder.JSONDecodeError as exc:
-      await ctx.send(f"Error: {exc.msg}")
+    except (jsonschema.exceptions.ValidationError, json.decoder.JSONDecodeError) as exc:
+      await ctx.message.add_reaction(self.bot._reactions["deny"])
+      await ctx.send(f"JSON Error: {exc.message}")
 
   @blacklist.command(aliases=["v"])
   async def view(self, ctx: commands.Context, entry: str):
@@ -81,6 +81,7 @@ class Blacklist(commands.Cog):
         )
       )
     else:
+      await ctx.message.add_reaction(self.bot._reactions["confused"])
       await ctx.send("No such user.\nTry `blacklist list` first.")
 
   @blacklist.command(aliases=["l"])

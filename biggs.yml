@@ -33,9 +33,10 @@ ignored_channels:
 # Emoji for command feedback.
 # Use the ID (number)
 reactions:
-  header: 514095248851599361 # Coat_Arms
+  header: 514095248851599361 # :Coat_Arms:
   confirm: "\U00002705" # :white_check_mark:
   deny: "\U0000274c" # :x:
+  confused: "\U00002754" # :grey_question:
 
 # Path for TinyDB database folder
 tinydb_path: "./data/"
