@@ -21,14 +21,15 @@ self_assignable_roles:
   # Other stuff
   - 669700746819797026 # Jackbox
   - 702285837714456577 # Tower Unite
+  - 736237621595996210 # GMOD
 
 # Server the bot operates in
 guild_id: 144870693983485952 # Bodiam
 # Channel the bot sends administrative notices to
-notice_channel_id: 732236293207228437 # bot-test
+notice_channel_id: 732236293207228437 # biggs-log
 # Channels the bot does not monitor
 ignored_channels:
-  - 535870057839067137 # congress-hall (Example)
+  - 735471741580869632 # mud-digging-log
 
 # Emoji for command feedback.
 # Use the ID (number)
