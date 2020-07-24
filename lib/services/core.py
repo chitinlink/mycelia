@@ -38,7 +38,7 @@ class Core(commands.Cog):
       "git log -1 --date=relative --format=%ad".split(" ")
     ).decode("utf-8").strip()
     await ctx.send(
-      f"{self.bot._reactions['header']} Biggs (commit `{_hash}`) -- Last updated {_date}"
+      f"{self.bot._reactions['header']} Biggs (commit `{_hash}`) — Last updated {_date}"
     )
 
   # Global check
