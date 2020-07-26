@@ -13,31 +13,31 @@ class Role(commands.Cog):
       self.bot._config["self_assignable_roles"]))
 
   @commands.group(aliases=["r"])
-  async def role(self, ctx):
+  async def role(self, ctx: commands.Context):
     """ Manage your roles """
     if ctx.invoked_subcommand is None: pass
 
   @role.command(aliases=["a"])
-  async def add(self, ctx, *, role: dRole):
+  async def add(self, ctx: commands.Context, *, role: dRole):
     """ Assign yourself a role """
     await ctx.author.add_roles(role)
     await ctx.message.add_reaction(self.bot._reactions["confirm"])
 
   @role.command(aliases=["r"])
-  async def remove(self, ctx, *, role: dRole):
+  async def remove(self, ctx: commands.Context, *, role: dRole):
     """ Remove a role you have """
     await ctx.author.remove_roles(role)
     await ctx.message.add_reaction(self.bot._reactions["confirm"])
 
   @add.error
   @remove.error
-  async def addremove_error(self, ctx, error):
+  async def addremove_error(self, ctx: commands.Context, error: commands.CommandError):
     if isinstance(error, commands.BadArgument):
       await ctx.message.add_reaction(self.bot._reactions["confused"])
       await ctx.send(error, delete_after=10)
 
   @role.command(aliases=["l"])
-  async def list(self, ctx):
+  async def list(self, ctx: commands.Context):
     """ List all the self-assignable and requestable roles """
     await ctx.send(
       "**List of self-assignable roles:**\n" +

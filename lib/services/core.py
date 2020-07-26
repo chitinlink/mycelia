@@ -10,7 +10,7 @@ def msg(self, message, *args, **kws):
   self._log(15, message, args, **kws)
 logging.Logger.msg = msg
 
-def funnel(bot, message):
+def funnel(bot, message: Message):
   # Ignore if the bot isn't ready
   if bot.is_ready():
     # Ignore unless it's in the correct server (which implies also not a DM)
@@ -29,7 +29,7 @@ class Core(commands.Cog):
     self.bot = bot
 
   @commands.command(aliases=["v", "hello"])
-  async def version(self, ctx):
+  async def version(self, ctx: commands.Context):
     """ Display current bot version. """
     _hash = subprocess.check_output(
       "git rev-parse --short HEAD".split(" ")
@@ -42,7 +42,7 @@ class Core(commands.Cog):
     )
 
   # Global check
-  async def bot_check(self, ctx) -> bool:
+  async def bot_check(self, ctx: commands.Context) -> bool:
     # Log all commands invoked
     log.info(f"Command invoked: {ctx.command.qualified_name}")
     # Pass all commands through the funnel
@@ -54,5 +54,5 @@ class Core(commands.Cog):
     log.msg(f"{message.channel}§{message.author}: {message.content}")
 
   @commands.Cog.listener(name="on_command_error")
-  async def log_error(self, ctx, error):
+  async def log_error(self, ctx: commands.Context, error: commands.CommandError):
     log.warning(f"Command error ({error.__class__.__name__}): {error}")

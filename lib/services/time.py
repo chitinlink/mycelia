@@ -73,12 +73,12 @@ class Time(commands.Cog):
     self.bot = bot # type: commands.Bot
 
   @commands.group(aliases=["t"])
-  async def time(self, ctx):
+  async def time(self, ctx: commands.Context):
     """ Time(zone) related information """
     if ctx.invoked_subcommand is None: pass
 
   @time.command()
-  async def now(self, ctx, *, _input: typing.Optional[str] = "UTC"):
+  async def now(self, ctx: commands.Context, *, _input: typing.Optional[str] = "UTC"):
     """ Show the current time, in UTC by default """
 
     # Parse input
