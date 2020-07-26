@@ -43,7 +43,9 @@ class Blacklist(commands.Cog):
 
     except (jsonschema.exceptions.ValidationError, json.decoder.JSONDecodeError) as exc:
       await ctx.message.add_reaction(self.bot._reactions["deny"])
-      await ctx.send(f"JSON Error: {exc.message}")
+      if exc.__class__ == json.decoder.JSONDecodeError: msg = exc
+      else:                                             msg = exc.message
+      await ctx.send(f"JSON Error: {msg}")
 
   @blacklist.command(aliases=["v"])
   async def view(self, ctx: commands.Context, entry: str):
