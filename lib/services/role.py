@@ -3,7 +3,7 @@ import logging
 from discord import Role as dRole
 from discord.ext import commands
 
-from lib.utils import quote
+from lib.utils import md_list
 
 class Role(commands.Cog):
   def __init__(self, bot):
@@ -41,6 +41,6 @@ class Role(commands.Cog):
     """ List all the self-assignable and requestable roles """
     await ctx.send(
       "**List of self-assignable roles:**\n" +
-      "\n".join([f"• `{role.name}`" for role in self._roles]) + "\n" +
+      md_list(map(lambda r: f"`{r.name}`", self._roles)) + "\n" +
       "If you'd like a role added (especially pronouns), ask a moderator!"
     )

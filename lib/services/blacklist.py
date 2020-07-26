@@ -7,7 +7,7 @@ from discord.ext import commands
 from tinydb import where
 import jsonschema
 
-from lib.utils import quote
+from lib.utils import md_quote
 from lib.services.core import funnel
 
 class Blacklist(commands.Cog):
@@ -76,7 +76,7 @@ class Blacklist(commands.Cog):
 
       await ctx.send(
         f"**`{q['name']}`** aka {aliases}\n" +
-        quote(
+        md_quote(
           handles +
           f"**Short reason:** {short}\n" +
           "**Long reason:**||\n" +

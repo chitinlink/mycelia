@@ -13,7 +13,7 @@ from tinydb import TinyDB, where
 from discord.ext import tasks, commands
 
 # Local dependencies
-from lib.utils import quote
+from lib.utils import md_quote
 # Services
 from lib.services.core import Core
 from lib.services.blacklist import Blacklist
@@ -80,7 +80,7 @@ class Biggs(commands.Bot):
       await self._notice_channel.send(
         f"**Blacklist match:** {names}\n" +
         f"by {original_message.author.mention} in {original_message.channel.mention}:\n" +
-        quote(original_message.content) + "\n" +
+        md_quote(original_message.content) + "\n" +
         f"{original_message.jump_url}\n" +
         f"Use `blacklist view {entry}` for details"
       )
