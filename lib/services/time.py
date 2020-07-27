@@ -68,6 +68,20 @@ for offset, abbreviations in tzlist.items():
   for abbr in abbreviations:
     tztable[abbr] = prefix * datetime.timedelta(hours=hrs, minutes=mins)
 
+# Alternative formatting for timedelta
+def timedelta_to_str(delta: datetime.timedelta) -> str:
+  if delta < datetime.timedelta(0): out = "-"
+  else:                             out = "+"
+  # Adapted from datetime.timedelta.__str__
+  delta = abs(delta)
+  mm = delta.seconds // 60
+  hh, mm = divmod(mm, 60)
+  if hh == 0 and mm == 0: return ""
+  if delta.days: out += "%dd" % delta.days
+  out += "%d" % hh
+  if mm: out += ":%02d" % mm
+  return out
+
 class Time(commands.Cog):
   def __init__(self, bot):
     self.bot = bot # type: commands.Bot
@@ -105,33 +119,15 @@ class Time(commands.Cog):
           await ctx.send(exc)
           return
 
-        if match[3] == "-": prefix = -1
-        else:               prefix = +1
-        fakedelta = datetime.timedelta(hours=t.hour, minutes=t.minute)
-        delta = prefix * fakedelta
-
-        # Adapted from datetime.timedelta.__str__
-        offset = match[3]
-        mm, _ = divmod(fakedelta.seconds, 60)
-        hh, mm = divmod(mm, 60)
-        if fakedelta.days: offset += "%dd"
-        offset += "%d" % hh
-        if mm: offset += ":%02d" % mm
+        delta = prefix * datetime.timedelta(hours=t.hour, minutes=t.minute)
       else:
         delta = datetime.timedelta(0)
-        offset = ""
+
+      _utc_offset = ""
+      if tz != "UTC":
+        _utc_offset = f" (UTC{timedelta_to_str(utc_offset + delta)})"
 
       time = datetime.datetime.utcnow() + utc_offset + delta
-      await ctx.send(time.strftime(f"%I:%M%p {tz}{offset}"))
+      await ctx.send(time.strftime(f"%I:%M%p {tz}{timedelta_to_str(delta)}{_utc_offset}"))
     else:
       await ctx.send(f"That's definitely not a timezone. Try something like \"EST+5\".")
-
-  # @time.command(aliases=["conv"])
-  # async def convert(self, ctx, *, ):
-  #   """ Converts time between two timezones """
-  #   # ,time convert <time> <timezone> [["to"] <timezone>]
-  #   # await ctx.send(datetime.datetime.utcnow().strftime("%I:%M%p (%Z)"))
-  #   # ,t conv 2PM EST-2 to UTC+1
-  #   # ,t conv 5AM GMT+5
-  #   # parser.parse("Tue May 08 15:14:45 +0800 2012")
-  #   pass
