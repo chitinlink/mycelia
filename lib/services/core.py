@@ -55,4 +55,8 @@ class Core(commands.Cog):
 
   @commands.Cog.listener(name="on_command_error")
   async def log_error(self, ctx: commands.Context, error: commands.CommandError):
-    log.warning(f"Command error ({error.__class__.__name__}): {error}")
+    name = error.__class__.__name__
+    if isinstance(error, (commands.CheckFailure, commands.DisabledCommand, commands.CommandNotFound, commands.CommandOnCooldown)):
+      log.warning(f"{name}: {error}")
+    else:
+      log.error(f"Command error ({name}): {error}")
