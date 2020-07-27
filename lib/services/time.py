@@ -89,7 +89,7 @@ class Time(commands.Cog):
   @commands.group(aliases=["t"])
   async def time(self, ctx: commands.Context):
     """ Time(zone) related information """
-    if ctx.invoked_subcommand is None: pass
+    if ctx.invoked_subcommand is None: await ctx.send_help("time")
 
   @time.command()
   async def now(self, ctx: commands.Context, *, _input: typing.Optional[str] = "UTC"):

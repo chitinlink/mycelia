@@ -15,7 +15,7 @@ class Role(commands.Cog):
   @commands.group(aliases=["r"])
   async def role(self, ctx: commands.Context):
     """ Manage your roles """
-    if ctx.invoked_subcommand is None: pass
+    if ctx.invoked_subcommand is None: await ctx.send_help("role")
 
   @role.command(aliases=["a"])
   async def add(self, ctx: commands.Context, *, role: dRole):

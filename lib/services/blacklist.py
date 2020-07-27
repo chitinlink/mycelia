@@ -24,7 +24,7 @@ class Blacklist(commands.Cog):
   @commands.group(aliases=["bl"])
   async def blacklist(self, ctx: commands.Context):
     """ Restricted to moderators """
-    if ctx.invoked_subcommand is None: pass
+    if ctx.invoked_subcommand is None: await ctx.send_help("blacklist")
 
   @blacklist.command(aliases=["a"])
   async def add(self, ctx: commands.Context, *, member_json: str):
