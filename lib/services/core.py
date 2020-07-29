@@ -10,7 +10,7 @@ def msg(self, message, *args, **kws):
   self._log(15, message, args, **kws)
 logging.Logger.msg = msg
 
-def funnel(bot, message: Message):
+def funnel(bot: commands.Bot, message: Message):
   # Ignore if the bot isn't ready
   if bot.is_ready():
     # Ignore unless it's in the correct server (which implies also not a DM)
@@ -25,7 +25,7 @@ def funnel(bot, message: Message):
   return False
 
 class Core(commands.Cog):
-  def __init__(self, bot):
+  def __init__(self, bot: commands.Bot):
     self.bot = bot
 
   @commands.command(aliases=["v", "hello"])

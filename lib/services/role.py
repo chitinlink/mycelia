@@ -6,7 +6,7 @@ from discord.ext import commands
 from lib.utils import md_list
 
 class Role(commands.Cog):
-  def __init__(self, bot):
+  def __init__(self, bot: commands.Bot):
     self.bot = bot
     self._roles = list(map(
       lambda id: self.bot._guild.get_role(id),

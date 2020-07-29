@@ -11,7 +11,7 @@ from lib.utils import md_quote
 from lib.services.core import funnel
 
 class Blacklist(commands.Cog):
-  def __init__(self, bot):
+  def __init__(self, bot: commands.Bot):
     self.bot = bot
     self._blacklist = self.bot._db.table("blacklist")
     self._blacklist_member_schema = json.load(open("./lib/schema/blacklist_member.json"))
