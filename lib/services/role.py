@@ -3,7 +3,7 @@ import logging
 from discord import Role as dRole
 from discord.ext import commands
 
-from lib.utils import md_list
+from lib.utils import md_list, md_code
 
 class Role(commands.Cog):
   def __init__(self, bot: commands.Bot):
@@ -20,14 +20,26 @@ class Role(commands.Cog):
   @role.command(aliases=["a"])
   async def add(self, ctx: commands.Context, *, role: dRole):
     """ Assign yourself a role """
-    await ctx.author.add_roles(role)
-    await ctx.message.add_reaction(self.bot._reactions["confirm"])
+    if role in self._roles:
+      await ctx.author.add_roles(role)
+      await ctx.message.add_reaction(self.bot._reactions["confirm"])
+    else:
+      await ctx.message.add_reaction(self.bot._reactions["confused"])
+      await ctx.send("Role not available.", delete_after=10)
 
   @role.command(aliases=["r"])
   async def remove(self, ctx: commands.Context, *, role: dRole):
     """ Remove a role you have """
-    await ctx.author.remove_roles(role)
-    await ctx.message.add_reaction(self.bot._reactions["confirm"])
+    if role in self._roles:
+      if role in ctx.author.roles:
+        await ctx.author.remove_roles(role)
+        await ctx.message.add_reaction(self.bot._reactions["confirm"])
+      else:
+        await ctx.message.add_reaction(self.bot._reactions["confused"])
+        await ctx.send("You can't remove that role, because you don't have it.", delete_after=10)
+    else:
+      await ctx.message.add_reaction(self.bot._reactions["confused"])
+      await ctx.send("Role not available.", delete_after=10)
 
   @add.error
   @remove.error
@@ -41,6 +53,6 @@ class Role(commands.Cog):
     """ List all the self-assignable and requestable roles """
     await ctx.send(
       "**List of self-assignable roles:**\n" +
-      md_list(map(lambda r: f"`{r.name}`", self._roles)) + "\n" +
+      md_list(map(lambda r: md_code(r.name), self._roles)) + "\n" +
       "If you'd like a role added (especially pronouns), ask a moderator!"
     )
