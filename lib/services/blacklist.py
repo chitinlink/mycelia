@@ -7,18 +7,18 @@ from discord.ext import commands
 from tinydb import where
 import jsonschema
 
-from lib.utils import md_quote
+from lib.utils import is_mod, md_quote
 from lib.services.core import funnel
 
 class Blacklist(commands.Cog):
   def __init__(self, bot: commands.Bot):
     self.bot = bot
-    self._blacklist = self.bot._db.table("blacklist")
+    self._blacklist = bot._db.table("blacklist")
     self._blacklist_member_schema = json.load(open("./lib/schema/blacklist_member.json"))
 
   # You must be a moderator to run any of these commands
   async def cog_check(self, ctx: commands.Context):
-    return self.bot.is_mod(ctx.author)
+    return is_mod(ctx)
 
   # Commands
   @commands.group(aliases=["bl"])
@@ -38,11 +38,11 @@ class Blacklist(commands.Cog):
       # Submit validated JSON
       self._blacklist.insert(data)
 
-      await ctx.message.add_reaction(self.bot._reactions["confirm"])
+      await ctx.message.add_reaction(ctx.bot._reactions["confirm"])
       await ctx.send(f"Added `{data['name']}` to blacklist")
 
     except (jsonschema.exceptions.ValidationError, json.decoder.JSONDecodeError) as exc:
-      await ctx.message.add_reaction(self.bot._reactions["deny"])
+      await ctx.message.add_reaction(ctx.bot._reactions["deny"])
       if exc.__class__ == json.decoder.JSONDecodeError: msg = exc
       else:                                             msg = exc.message
       await ctx.send(f"JSON Error: {msg}")
@@ -84,7 +84,7 @@ class Blacklist(commands.Cog):
         )
       )
     else:
-      await ctx.message.add_reaction(self.bot._reactions["confused"])
+      await ctx.message.add_reaction(ctx.bot._reactions["confused"])
       await ctx.send("No such user.\nTry `blacklist list` first.")
 
   @blacklist.command(aliases=["l"])
@@ -118,6 +118,11 @@ class Blacklist(commands.Cog):
               _type = h["type"]
               value = h["handle"]
               if _type == "url":
+                # TODO this is the most complicated one it turns out
+                # and it requires some kind of URL-part specificity
+                # to be picked, ie "this parameter is important"
+                # ~
+                # this is something to be epxlored in an entirely new project
                 if not re.search(value, message.content): continue
               elif _type == "regex":
                 if not re.compile(value).match(message.content): continue

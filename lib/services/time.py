@@ -83,8 +83,6 @@ def timedelta_to_str(delta: datetime.timedelta) -> str:
   return out
 
 class Time(commands.Cog):
-  def __init__(self, bot: commands.Bot):
-    self.bot = bot
 
   @commands.group(aliases=["t"])
   async def time(self, ctx: commands.Context):

@@ -25,8 +25,6 @@ def funnel(bot: commands.Bot, message: Message):
   return False
 
 class Core(commands.Cog):
-  def __init__(self, bot: commands.Bot):
-    self.bot = bot
 
   @commands.command(aliases=["v", "hello"])
   async def version(self, ctx: commands.Context):
@@ -38,7 +36,7 @@ class Core(commands.Cog):
       "git log -1 --date=relative --format=%ad".split(" ")
     ).decode("utf-8").strip()
     await ctx.send(
-      f"{self.bot._reactions['header']} Biggs (commit `{_hash}`) — Last updated {_date}"
+      f"{ctx.bot._reactions['header']} Biggs (commit `{_hash}`) — Last updated {_date}"
     )
 
   # Global check
@@ -46,7 +44,7 @@ class Core(commands.Cog):
     # Log all commands invoked
     log.info(f"Command invoked: {ctx.command.qualified_name}")
     # Pass all commands through the funnel
-    return funnel(self.bot, ctx.message)
+    return funnel(ctx.bot, ctx.message)
 
   @commands.Cog.listener(name="on_message")
   async def log_message(self, message: Message):
