@@ -71,7 +71,7 @@ class Role(commands.Cog):
   @register.error
   @deregister.error
   async def regdereg_error(self, ctx: commands.Context, error: commands.CommandError):
-    if isinstance(error, commands.MissingRequiredArgument):
+    if isinstance(error, (commands.MissingRequiredArgument, commands.BadArgument)):
       await ctx.message.add_reaction(ctx.bot._reactions["confused"])
       await ctx.send(error, delete_after=10)
 
