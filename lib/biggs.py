@@ -30,7 +30,6 @@ class Biggs(commands.Bot):
     self._done_setup = False
 
     self._db = TinyDB(f"{config['tinydb_path']}db.json")
-    self._blacklist = self._db.table("blacklist")
 
     self.run(config["token"])
 
@@ -39,7 +38,7 @@ class Biggs(commands.Bot):
       # Internal props
       self._guild = self.get_guild(self._config["guild_id"])
       self._notice_channel = self.get_channel(self._config["notice_channel_id"])
-      self._ignored_channels = [self.get_channel(c) for c in self._config["ignored_channels"]] + [self._notice_channel]
+      self._ignored_channels = [self.get_channel(c) for c in self._config["ignored_channels"]]
 
       def parse_reactions(_id):
         if type(_id) == int: return self.get_emoji(_id)
