@@ -18,7 +18,7 @@ class Role(commands.Cog):
   @role.command(aliases=["a"])
   async def add(self, ctx: commands.Context, *, role: dRole):
     """ Assign yourself a role """
-    if role in self._roles:
+    if self._roles.search(where("id") == role.id):
       await ctx.author.add_roles(role)
       await ctx.message.add_reaction(ctx.bot._reactions["confirm"])
     else:
@@ -28,7 +28,7 @@ class Role(commands.Cog):
   @role.command(aliases=["r"])
   async def remove(self, ctx: commands.Context, *, role: dRole):
     """ Remove a role you have """
-    if role in self._roles:
+    if self._roles.search(where("id") == role.id):
       if role in ctx.author.roles:
         await ctx.author.remove_roles(role)
         await ctx.message.add_reaction(ctx.bot._reactions["confirm"])
@@ -53,7 +53,7 @@ class Role(commands.Cog):
   @role.command(aliases=["dereg"])
   @commands.check(is_mod)
   async def deregister(self, ctx: commands.Context, role: dRole):
-    """ (Mods) Register a role """
+    """ (Mods) Deregister a role """
     if self._roles.search(where("id") == role.id):
       self._roles.remove(where("id") == role.id)
       await ctx.message.add_reaction(ctx.bot._reactions["confirm"])
