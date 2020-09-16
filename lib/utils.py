@@ -1,5 +1,7 @@
+from discord.ext.commands import Context
+
 # Checks
-def is_mod(ctx) -> bool:
+def is_mod(ctx: Context) -> bool:
   """ Checks whether or not the author for the given context is a moderator based on their roles """
   return len(
     set(map(lambda r: r.id, ctx.author.roles)) &
