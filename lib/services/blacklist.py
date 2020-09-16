@@ -7,7 +7,7 @@ from discord.ext import commands
 from tinydb import where
 import jsonschema
 
-from lib.utils import is_mod, in_guild, bot_is_ready, not_ignored_channel, not_from_bot, in_guild, md_quote
+from lib.utils import is_mod, in_guild, bot_is_ready, not_ignored_channel, not_from_bot, in_guild, md_quote, react
 
 class Blacklist(commands.Cog):
   def __init__(self, bot: commands.Bot):
@@ -37,11 +37,11 @@ class Blacklist(commands.Cog):
       # Submit validated JSON
       self._blacklist.insert(data)
 
-      await ctx.message.add_reaction(ctx.bot._reactions["confirm"])
+      await react(ctx, "confirm")
       await ctx.send(f"Added `{data['name']}` to blacklist")
 
     except (jsonschema.exceptions.ValidationError, json.decoder.JSONDecodeError) as exc:
-      await ctx.message.add_reaction(ctx.bot._reactions["deny"])
+      await react(ctx, "deny")
       if exc.__class__ == json.decoder.JSONDecodeError: msg = exc
       else:                                             msg = exc.message
       await ctx.send(f"JSON Error: {msg}")
@@ -83,7 +83,7 @@ class Blacklist(commands.Cog):
         )
       )
     else:
-      await ctx.message.add_reaction(ctx.bot._reactions["confused"])
+      await react(ctx, "confused")
       await ctx.send("No such user.\nTry `blacklist list` first.")
 
   @blacklist.command(aliases=["l"])

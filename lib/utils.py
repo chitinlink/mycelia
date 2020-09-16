@@ -52,3 +52,7 @@ def md_spoiler(text: str) -> str:
     Note issue #30.
   """
   return f"||{text}||"
+
+# Etc
+async def react(ctx: Context, reaction: str):
+  await ctx.message.add_reaction(ctx.bot._reactions[reaction])

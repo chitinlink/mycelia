@@ -4,7 +4,7 @@ from discord import Role as dRole
 from discord.ext import commands
 from tinydb import where
 
-from lib.utils import is_mod, in_guild, md_list, md_code
+from lib.utils import is_mod, in_guild, md_list, md_code, react
 
 class Role(commands.Cog):
   def __init__(self, bot: commands.Bot):
@@ -24,9 +24,9 @@ class Role(commands.Cog):
     """ Assign yourself a role """
     if self._roles.search(where("id") == role.id):
       await ctx.author.add_roles(role)
-      await ctx.message.add_reaction(ctx.bot._reactions["confirm"])
+      await react(ctx, "confirm")
     else:
-      await ctx.message.add_reaction(ctx.bot._reactions["confused"])
+      await react(ctx, "confused")
       await ctx.send("Role not available.", delete_after=10)
 
   @role.command(aliases=["r"])
@@ -35,12 +35,12 @@ class Role(commands.Cog):
     if self._roles.search(where("id") == role.id):
       if role in ctx.author.roles:
         await ctx.author.remove_roles(role)
-        await ctx.message.add_reaction(ctx.bot._reactions["confirm"])
+        await react(ctx, "confirm")
       else:
-        await ctx.message.add_reaction(ctx.bot._reactions["confused"])
+        await react(ctx, "confused")
         await ctx.send("You can't remove that role, because you don't have it.", delete_after=10)
     else:
-      await ctx.message.add_reaction(ctx.bot._reactions["confused"])
+      await react(ctx, "confused")
       await ctx.send("Role not available.", delete_after=10)
 
   @role.command(aliases=["reg"])
@@ -48,11 +48,11 @@ class Role(commands.Cog):
   async def register(self, ctx: commands.Context, *, role: dRole):
     """ (Mods) Register a role """
     if self._roles.search(where("id") == role.id):
-      await ctx.message.add_reaction(ctx.bot._reactions["confused"])
+      await react(ctx, "confused")
       await ctx.send("Role already registered.", delete_after=10)
     else:
       self._roles.insert({ "id": role.id })
-      await ctx.message.add_reaction(ctx.bot._reactions["confirm"])
+      await react(ctx, "confirm")
 
   @role.command(aliases=["dereg"])
   @commands.check(is_mod)
@@ -60,23 +60,23 @@ class Role(commands.Cog):
     """ (Mods) Deregister a role """
     if self._roles.search(where("id") == role.id):
       self._roles.remove(where("id") == role.id)
-      await ctx.message.add_reaction(ctx.bot._reactions["confirm"])
+      await react(ctx, "confirm")
     else:
-      await ctx.message.add_reaction(ctx.bot._reactions["confused"])
+      await react(ctx, "confused")
       await ctx.send("Role not registered.", delete_after=10)
 
   @add.error
   @remove.error
   async def addremove_error(self, ctx: commands.Context, error: commands.CommandError):
     if isinstance(error, commands.BadArgument):
-      await ctx.message.add_reaction(ctx.bot._reactions["confused"])
+      await react(ctx, "confused")
       await ctx.send(error, delete_after=10)
 
   @register.error
   @deregister.error
   async def regdereg_error(self, ctx: commands.Context, error: commands.CommandError):
     if isinstance(error, (commands.MissingRequiredArgument, commands.BadArgument)):
-      await ctx.message.add_reaction(ctx.bot._reactions["confused"])
+      await react(ctx, "confused")
       await ctx.send(error, delete_after=10)
 
   @role.command(aliases=["l"])

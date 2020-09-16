@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-from lib.utils import in_dms
+from lib.utils import in_dms, react
 
 class Anon(commands.Cog):
   @commands.command()
@@ -10,7 +10,7 @@ class Anon(commands.Cog):
       await ctx.bot._notice_channel.send(
         f":eye_in_speech_bubble: {msg}"
       )
-      await ctx.message.add_reaction(ctx.bot._reactions["confirm"])
+      await react(ctx, "confirm")
     else:
-      await ctx.message.add_reaction(ctx.bot._reactions["confused"])
+      await react(ctx, "confused")
       await ctx.send("This command is available only in DMs.", delete_after=10)
