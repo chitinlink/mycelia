@@ -7,8 +7,7 @@ from discord.ext import commands
 from tinydb import where
 import jsonschema
 
-from lib.utils import is_mod, md_quote
-from lib.services.core import funnel
+from lib.utils import is_mod, in_guild, bot_is_ready, not_ignored_channel, not_from_bot, in_guild, md_quote
 
 class Blacklist(commands.Cog):
   def __init__(self, bot: commands.Bot):
@@ -18,7 +17,7 @@ class Blacklist(commands.Cog):
 
   # You must be a moderator to run any of these commands
   async def cog_check(self, ctx: commands.Context):
-    return is_mod(ctx)
+    return (is_mod(ctx) and in_guild(ctx))
 
   # Commands
   @commands.group(aliases=["bl"])
@@ -100,60 +99,62 @@ class Blacklist(commands.Cog):
 
   # Message scanner
   @commands.Cog.listener("on_message")
+  @commands.check(bot_is_ready)
+  @commands.check(in_guild)
+  @commands.check(not_ignored_channel)
+  @commands.check(not_from_bot)
   async def scan_message(self, message: Message):
-    # Run the message through the funnel first
-    if funnel(self.bot, message):
-      # Make sure it's not a blacklist command
-      ctx = await self.bot.get_context(message)
-      if not (ctx.command and ctx.command.qualified_name == "blacklist"):
+    # Make sure it's not a blacklist command
+    ctx = await self.bot.get_context(message)
+    if not (ctx.command and ctx.command.qualified_name == "blacklist"):
 
-        matches = []
+      matches = []
 
-        # For each blacklist entry...
-        for member in self._blacklist.all():
-          # ...For each of its handles...
-          if "handles" in member:
-            for h in member["handles"]:
-              # ...If none of the handles match the message, skip
-              _type = h["type"]
-              value = h["handle"]
-              if _type == "url":
-                # TODO this is the most complicated one it turns out
-                # and it requires some kind of URL-part specificity
-                # to be picked, ie "this parameter is important"
-                # ~
-                # this is something to be epxlored in an entirely new project
-                if not re.search(value, message.content): continue
-              elif _type == "regex":
-                if not re.compile(value).match(message.content): continue
-              elif _type == "twitter":
-                if not (re.search(
-                  re.compile(f"((https?://)?(mobile.)?twitter.com/)?{value[1:]}|{value}"),
-                  message.content
-                )): continue
-              elif _type == "tumblr":
-                if not (
-                  re.search(value, message.content) or
-                  re.search(f"(https?://)?{value}.tumblr(.com)?", message.content) or
-                  re.search(f"(https?://)?(www.)?tumblr.com/blog/view/{value}", message.content)
-                ): continue
-              # Otherwise add to matches
-              matches.append(member)
+      # For each blacklist entry...
+      for member in self._blacklist.all():
+        # ...For each of its handles...
+        if "handles" in member:
+          for h in member["handles"]:
+            # ...If none of the handles match the message, skip
+            _type = h["type"]
+            value = h["handle"]
+            if _type == "url":
+              # TODO this is the most complicated one it turns out
+              # and it requires some kind of URL-part specificity
+              # to be picked, ie "this parameter is important"
+              # ~
+              # this is something to be epxlored in an entirely new project
+              if not re.search(value, message.content): continue
+            elif _type == "regex":
+              if not re.compile(value).match(message.content): continue
+            elif _type == "twitter":
+              if not (re.search(
+                re.compile(f"((https?://)?(mobile.)?twitter.com/)?{value[1:]}|{value}"),
+                message.content
+              )): continue
+            elif _type == "tumblr":
+              if not (
+                re.search(value, message.content) or
+                re.search(f"(https?://)?{value}.tumblr(.com)?", message.content) or
+                re.search(f"(https?://)?(www.)?tumblr.com/blog/view/{value}", message.content)
+              ): continue
+            # Otherwise add to matches
+            matches.append(member)
 
-        # Search for *all* documents...
-        matches += self._blacklist.search(
-          # where any of their aliases match any of the words in the message.
-          # ("words" is loosely defined by the regex below,
-          #  which is supposed to catch usernames mostly)
-          where("aliases").any(re.findall(r"([\w'_]+)", message.content))
-        )
+      # Search for *all* documents...
+      matches += self._blacklist.search(
+        # where any of their aliases match any of the words in the message.
+        # ("words" is loosely defined by the regex below,
+        #  which is supposed to catch usernames mostly)
+        where("aliases").any(re.findall(r"([\w'_]+)", message.content))
+      )
 
-        # Unique values only
-        matches = list({ e["name"]: e for e in matches }.values())
+      # Unique values only
+      matches = list({ e["name"]: e for e in matches }.values())
 
-        # If there are any matches:
-        if matches:
-          await self.bot.post_notice(
-            kind="scan_match",
-            data=matches,
-            original_message=message)
+      # If there are any matches:
+      if matches:
+        await self.bot.post_notice(
+          kind="scan_match",
+          data=matches,
+          original_message=message)

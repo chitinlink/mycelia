@@ -5,6 +5,8 @@ import re
 
 from discord.ext import commands
 
+from lib.utils import in_guild
+
 log = logging.getLogger("Biggs")
 
 # Dict of UTC offsets -> associated timezone abbreviations
@@ -83,6 +85,9 @@ def timedelta_to_str(delta: datetime.timedelta) -> str:
   return out
 
 class Time(commands.Cog):
+  # Guild-only
+  async def cog_check(self, ctx: commands.Context):
+    return in_guild(ctx)
 
   @commands.group(aliases=["t"])
   async def time(self, ctx: commands.Context):

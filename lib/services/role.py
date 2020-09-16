@@ -4,11 +4,15 @@ from discord import Role as dRole
 from discord.ext import commands
 from tinydb import where
 
-from lib.utils import is_mod, md_list, md_code
+from lib.utils import is_mod, in_guild, md_list, md_code
 
 class Role(commands.Cog):
   def __init__(self, bot: commands.Bot):
     self._roles = bot._db.table("roles")
+
+  # Guild-only
+  async def cog_check(self, ctx: commands.Context):
+    return in_guild(ctx)
 
   @commands.group(aliases=["r"])
   async def role(self, ctx: commands.Context):

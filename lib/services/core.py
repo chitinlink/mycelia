@@ -4,28 +4,15 @@ import subprocess
 from discord import Message
 from discord.ext import commands
 
+from lib.utils import bot_is_ready, not_ignored_channel, not_from_bot
+
 log = logging.getLogger("Biggs")
 logging.addLevelName(15, "MESSAGE")
 def msg(self, message, *args, **kws):
   self._log(15, message, args, **kws)
 logging.Logger.msg = msg
 
-def funnel(bot: commands.Bot, message: Message):
-  # Ignore if the bot isn't ready
-  if bot.is_ready():
-    # Ignore unless it's in the correct server (which implies also not a DM)
-    if message.guild == bot._guild:
-      # Ignore unless:
-      if (
-        # It's not from a bot (incl. Biggs)
-        not message.author.bot and
-        # and it's not in an ignored channel
-        message.channel not in bot._ignored_channels
-      ): return True
-  return False
-
 class Core(commands.Cog):
-
   @commands.command(aliases=["v", "hello"])
   async def version(self, ctx: commands.Context):
     """ Display current bot version. """
@@ -43,8 +30,12 @@ class Core(commands.Cog):
   async def bot_check(self, ctx: commands.Context) -> bool:
     # Log all commands invoked
     log.info(f"Command invoked: {ctx.command.qualified_name}")
-    # Pass all commands through the funnel
-    return funnel(ctx.bot, ctx.message)
+    # Ensure all of these basic checks pass
+    return (
+      bot_is_ready(ctx) and
+      not_ignored_channel(ctx) and
+      not_from_bot(ctx)
+    )
 
   @commands.Cog.listener(name="on_message")
   async def log_message(self, message: Message):
