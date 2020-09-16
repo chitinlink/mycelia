@@ -7,15 +7,19 @@ def bot_is_ready(ctx: Context) -> bool:
 
 def not_from_bot(ctx: Context) -> bool:
   """ Checks that the author for the given context is not a bot. Included in the message funnel. """
-  return not ctx.message.author.bot
+  return not ctx.author.bot
 
 def not_ignored_channel(ctx: Context) -> bool:
   """ Checks that the given context is not in an ignored channel. Included in the message funnel. """
-  return ctx.message.channel not in ctx.bot._ignored_channels
+  return ctx.channel not in ctx.bot._ignored_channels
 
 def in_guild(ctx: Context) -> bool:
-  """ Checks if the message for the given context is in the configured guild. """
-  return ctx.message.guild == ctx.bot._guild
+  """ Checks if the given context is in the configured guild. """
+  return ctx.guild == ctx.bot._guild
+
+def in_dms(ctx: Context) -> bool:
+  """ Checks if the given context is in DMs. """
+  return ctx.guild is None
 
 def is_mod(ctx: Context) -> bool:
   """ Checks whether or not the author for the given context is a moderator based on their roles """

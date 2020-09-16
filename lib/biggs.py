@@ -19,7 +19,7 @@ from lib.services.core import Core
 from lib.services.blacklist import Blacklist
 from lib.services.role import Role
 from lib.services.time import Time
-# from lib.services.schedule import Schedule
+from lib.services.anon import Anon
 
 # Logging
 log = logging.getLogger("Biggs")
@@ -53,8 +53,8 @@ class Biggs(commands.Bot):
       # Commands
       self.add_cog(Blacklist(self))
       self.add_cog(Role(self))
-      self.add_cog(Time(self))
-      # self.add_cog(Schedule(self))
+      self.add_cog(Time())
+      self.add_cog(Anon())
 
       self._done_setup = True
       log.info("Initial setup done.")
