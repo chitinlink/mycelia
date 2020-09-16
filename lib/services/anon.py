@@ -7,7 +7,7 @@ class Anon(commands.Cog):
   async def anon(self, ctx: commands.Context, *, msg: str):
     """ (DMs only) Send an anonymous message to the moderators """
     if in_dms(ctx):
-      await ctx.bot._guild._notice_channel.send(
+      await ctx.bot._notice_channel.send(
         f":eye_in_speech_bubble: {msg}"
       )
       await ctx.message.add_reaction(ctx.bot._reactions["confirm"])
