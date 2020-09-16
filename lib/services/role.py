@@ -41,7 +41,7 @@ class Role(commands.Cog):
 
   @role.command(aliases=["reg"])
   @commands.check(is_mod)
-  async def register(self, ctx: commands.Context, role: dRole):
+  async def register(self, ctx: commands.Context, *, role: dRole):
     """ (Mods) Register a role """
     if self._roles.search(where("id") == role.id):
       await ctx.message.add_reaction(ctx.bot._reactions["confused"])
@@ -52,7 +52,7 @@ class Role(commands.Cog):
 
   @role.command(aliases=["dereg"])
   @commands.check(is_mod)
-  async def deregister(self, ctx: commands.Context, role: dRole):
+  async def deregister(self, ctx: commands.Context, *, role: dRole):
     """ (Mods) Deregister a role """
     if self._roles.search(where("id") == role.id):
       self._roles.remove(where("id") == role.id)
