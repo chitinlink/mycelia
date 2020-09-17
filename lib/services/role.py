@@ -81,7 +81,7 @@ class Role(commands.Cog):
 
   @role.command(aliases=["l"])
   async def list(self, ctx: commands.Context):
-    """ List all the self-assignable and requestable roles """
+    """ List all the self-assignable roles """
     await ctx.send(
       "**List of self-assignable roles:**\n" +
       md_list(map(lambda r: md_code(ctx.bot._guild.get_role(r["id"]).name), self._roles)) + "\n" +
