@@ -1,4 +1,5 @@
-import os, random
+from os import listdir
+from random import choice
 
 from discord import File
 from discord.ext import commands
@@ -14,6 +15,6 @@ class Fun(commands.Cog):
   async def yoda(self, ctx: commands.Context):
     """ Yoda. """
     async with ctx.typing():
-      with open("./assets/yoda_pics/" + random.choice(os.listdir("./assets/yoda_pics/")), "rb") as f:
+      with open("./assets/yoda_pics/" + choice(listdir("./assets/yoda_pics/")), "rb") as f:
         await ctx.send(file=File(f))
         await ctx.message.delete()
