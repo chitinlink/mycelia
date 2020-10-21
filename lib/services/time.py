@@ -134,3 +134,13 @@ class Time(commands.Cog):
       await ctx.send(time.strftime(f"%I:%M%p {tz}{timedelta_to_str(delta)}{_utc_offset}"))
     else:
       await ctx.send(f"That's definitely not a timezone. Try something like \"EST+5\".")
+
+  # @time.command(aliases=["conv"])
+  # async def convert(self, ctx, *, ):
+  #   """ Converts time between two timezones """
+  #   # ,time convert <time> <timezone> [["to"] <timezone>]
+  #   # await ctx.send(datetime.datetime.utcnow().strftime("%I:%M%p (%Z)"))
+  #   # ,t conv 2PM EST-2 to UTC+1
+  #   # ,t conv 5AM GMT+5
+  #   # parser.parse("Tue May 08 15:14:45 +0800 2012")
+  #   pass
