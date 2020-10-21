@@ -1,6 +1,8 @@
 import json
 import logging
 import datetime
+import schedule
+from asyncio import create_task as await_this
 
 import jsonschema
 from tinydb import where
@@ -15,19 +17,34 @@ class Schedule(commands.Cog):
     self.bot = bot
     self._schedule = bot._db.table("schedule")
     self._schedule_task_schema = json.load(open("./lib/schema/schedule_task.json"))
+
+    # Set up all saved tasks
+    for task in self._schedule.all():
+      self.setup_task(task)
+
     self.tick.start()
 
   # Guild-only
   async def cog_check(self, ctx: commands.Context):
     return in_guild(ctx)
 
-  # Add to schedule
+  # Set up one task
+  def setup_task(self, task):
+    def task_message(self, channel, message):
+      await_this(self.bot._guild.get_channel(channel).send(message))
+
+    if task["type"] == "message":
+      eval(task["directive"])(lambda: task_message(self, task["channel"], task["message"]))
+
+  #Add to schedule
   def add_task(self, task: dict):
     """ Insert """
     # Validate task
     jsonschema.validate(instance=task, schema=self._schedule_task_schema)
     # Submit validated JSON
     self._schedule.insert(task)
+    # Set up task immediately
+    self.setup_task(task)
 
   # Commands
   @commands.group(aliases=["sch"])
@@ -45,7 +62,7 @@ class Schedule(commands.Cog):
       self.add_task(data)
 
       await react(ctx, "confirm")
-      await ctx.send(f"Added task of type `{data['type']}` to the schedule.")
+      await ctx.send(f"Added task of type `{data['type']}` to the schedule.", delete_after=10)
 
     except (jsonschema.exceptions.ValidationError, json.decoder.JSONDecodeError) as exc:
       await react(ctx, "deny")
@@ -61,33 +78,8 @@ class Schedule(commands.Cog):
 
   @tasks.loop(seconds=1)
   async def tick(self):
-    for task in self._schedule.all():
-      # Check if we're past the time for the task
-      if datetime.datetime.now() - datetime.datetime.strptime(task["at"], TIME_FORMAT) >= datetime.timedelta(0):
-        # Do the task
-        if task["type"] == "message":
-          # await self.bot._guild.get_channel(task["channel"]).send(task["message"])
-          print(task["message"])
-        #if task["type"] == "purge":
-        # TODO:
-        # 1. Do the task
-        # 2. Figure out what to do when several "repeat cycles" have gone by.
-        #    Maybe calculate how many times to repeat the task? Only if relevant.
-        #    Only need to purge once, then fast-forward "at".
-
-        # If it's set to repeat, then reschedule
-        if "repeat_after" in task:
-          # at += repeat_after
-          new_task = task
-          new_task["at"] = (datetime.datetime.strptime(
-            new_task["at"], TIME_FORMAT) +
-            datetime.timedelta(seconds=new_task["repeat_after"])
-          ).strftime(TIME_FORMAT)
-          # Add the new task to the schedule
-          self._schedule.insert(new_task)
-
-        # Remove from the schedule
-        self._schedule.remove(doc_ids=[task.doc_id])
+    schedule.run_pending()
+    print("Tick")
 
   @tick.before_loop
   async def before_tick(self):

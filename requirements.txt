@@ -3,5 +3,6 @@ tinydb==4.1.1
 jsonschema==3.2.0
 colorlog==4.1.0
 pyyaml==5.3.1
+schedule==0.6.0
 
 yarl==1.4.2 # Versions above this give a "requote" error on startup

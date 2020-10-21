@@ -2,30 +2,22 @@
   "type": "object",
   "required": ["type"],
   "properties": {
-    "type":           { "type": "string", "enum": ["purge", "message"] },
-    "channel":        { "type": "integer" },
-    "message":        { "type": "string" },
-    "at":             { "type": "string", "format": "date-time" },
-    "repeat_after":   { "type": "integer", "minimum": 1 },
-    "repeat_monthly": { "type": "integer" },
-    "repeat_daily":   { "type": "string", "format": "time" },
-    "repeat_yearly":  {
-      "type": "object",
-      "required": ["month", "day"],
-      "properties": {
-        "month": { "type": "integer", "minimum": 1, "maximum": 12 },
-        "day":   { "type": "integer", "minimum": 1, "maximum": 31 }
-      }
+    "type":      { "type": "string", "enum": ["purge", "message"] },
+    "channel":   { "type": "integer" },
+    "message":   { "type": "string" },
+    "directive": {
+      "type": "string",
+      "pattern": "^schedule\\.every\\(\\d*\\)\\.[^;\\s\\b]+\\.do$"
     }
   },
   "allOf": [
     {
       "if": { "properties": { "type": { "const": "purge" } } },
-      "then": { "required": ["type", "channel", "at"] }
+      "then": { "required": ["type", "channel", "directive"] }
     },
     {
       "if": { "properties": { "type": { "const": "message" } } },
-      "then": { "required": ["type", "channel", "at", "message"] }
+      "then": { "required": ["type", "channel", "directive", "message"] }
     }
   ]
 }
