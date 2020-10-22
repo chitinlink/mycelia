@@ -21,7 +21,6 @@ ignored_channels: []
 # Roles considered "moderator" roles for restricting access to commands
 mod_roles:
   - 144871781646336000 # General Secretary
-  - 542802661884428288 # Politburo
   - 144871784619966464 # Central Committee
 
 # Emoji for command feedback.
