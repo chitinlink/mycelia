@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "required": ["datetime", "channel", "message", "meta"],
+  "properties": {
+    "datetime": { "type": "string", "format": "date-time" },
+    "channel":  { "type": "integer" },
+    "message":  { "type": "string" },
+    "meta": {
+      "type": "object",
+      "required": ["message", "member", "datetime"],
+      "properties": {
+        "message":  { "type": "integer" },
+        "member":   { "type": "integer" },
+        "datetime": { "type": "string", "format": "date-time"}
+      }
+    }
+  }
+}

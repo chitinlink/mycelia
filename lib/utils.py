@@ -1,4 +1,6 @@
 from discord.ext.commands import Context
+from datetime import timedelta
+from typing import Union
 
 # Checks
 def bot_is_ready(ctx: Context) -> bool:
@@ -35,7 +37,11 @@ def md_quote(text: str) -> str:
 
 def md_list(lst: iter) -> str:
   """ Formats a list of strings into a consistent style """
-  return "\n".join([f"• {i}" for i in lst])
+  return "\n".join([md_list_item(i) for i in lst])
+
+def md_list_item(text: str) -> str:
+  """ Formats a single line of a consistent-style list """
+  return f"• {text}\n"
 
 def md_codeblock(block: str, lang: str = "") -> str:
   """ Markdown code block """
@@ -55,4 +61,42 @@ def md_spoiler(text: str) -> str:
 
 # Etc
 async def react(ctx: Context, reaction: str):
+  """ Add reaction to given context. """
   await ctx.message.add_reaction(ctx.bot._reactions[reaction])
+
+# revised from zekel's answer at SO:
+# https://stackoverflow.com/a/5333305/12086004
+def readable_delta(delta: timedelta) -> str:
+  """ Returns a human-readable timedelta. """
+
+  def plur(num: int) -> str:
+    return "" if num == 1 else "s"
+
+  future = False
+  if delta < timedelta(0):
+    future = True
+    delta = -delta
+
+  delta_days = abs(delta.days)
+  delta_seconds = abs(delta.seconds)
+  delta_minutes = delta_seconds // 60
+  delta_hours = delta_minutes // 60
+
+  if delta_days:
+    if delta_days > 364:
+      delta_years = delta_days // 364
+      out = f"{delta_years} year{plur(delta_years)}"
+    elif delta_days > 30:
+      delta_months = delta_days // 30
+      out = f"{delta_months} month{plur(delta_months)}"
+    else:
+      out = f"{delta_days} day{plur(delta_days)}"
+  elif delta_hours:
+    out = f"{delta_hours} hour{plur(delta_hours)}"
+  elif delta_minutes:
+    out = f"{delta_minutes} minute{plur(delta_minutes)}"
+  else:
+    out = f"{delta_seconds} second{plur(delta_seconds)}"
+
+  if future: return "in " + out
+  else:      return out + " ago"
