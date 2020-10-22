@@ -21,6 +21,7 @@ from lib.services.role import Role
 from lib.services.time import Time
 from lib.services.anon import Anon
 from lib.services.schedule import Schedule
+from lib.services.reminder import Reminder
 from lib.services.fun import Fun
 
 # Logging
@@ -58,6 +59,7 @@ class Biggs(commands.Bot):
       self.add_cog(Time())
       self.add_cog(Anon())
       self.add_cog(Schedule(self))
+      self.add_cog(Reminder(self))
       self.add_cog(Fun())
 
       self._done_setup = True
@@ -66,6 +68,9 @@ class Biggs(commands.Bot):
     # Done loading
     log.info(f"Logged on as {self.user}!")
 
+  # FIXME stale, mostly unused
+  # It's better for each cog to just do things interdependently, or use the
+  # bot/ctx as argument in a method in lib.utils
   async def post_notice(self, kind: str = "plain", original_message: discord.Message = None, data: Any = None):
     # Plain message
     if kind == "plain":

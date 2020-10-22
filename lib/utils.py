@@ -2,6 +2,9 @@ from discord.ext.commands import Context
 from datetime import timedelta
 from typing import Union
 
+# Constants
+TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
+
 # Checks
 def bot_is_ready(ctx: Context) -> bool:
   """ True if the bot is ready. Included in the message funnel. """
