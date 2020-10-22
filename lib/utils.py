@@ -33,6 +33,10 @@ def is_mod(ctx: Context) -> bool:
     set(ctx.bot._config["mod_roles"])
   ) > 0
 
+async def is_guild_member(ctx: Context) -> bool:
+  """ Intended for use in DMs, checks if author is a member of the guild """
+  return await ctx.bot._guild.fetch_member(ctx.author.id)
+
 # Text formatting
 def md_quote(text: str) -> str:
   """ Prefixes every line of given `text` with a ">" """

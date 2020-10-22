@@ -1,9 +1,10 @@
 from discord.ext import commands
 
-from lib.utils import in_dms, react
+from lib.utils import in_dms, is_guild_member, react
 
 class Anon(commands.Cog):
   @commands.command()
+  @commands.check(is_guild_member)
   async def anon(self, ctx: commands.Context, *, msg: str):
     """ (DMs only) Send an anonymous message to the moderators """
     if in_dms(ctx):
