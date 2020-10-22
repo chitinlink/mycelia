@@ -89,8 +89,10 @@ class Reminder(commands.Cog):
         # Only first line, 60 chars max
         _lines = reminder["message"].split("\n")
         msg = _lines[0]
-        if len(msg) > 60: msg = msg[:60]
-        msg += " (…)"
+        if len(msg) > 60:
+          msg = msg[:60] + " (…)"
+        elif len(_lines) > 1:
+          msg += " (…)"
 
         out += md_list_item(
           f"{md_code(str(reminder.doc_id).rjust(3))} - " +
