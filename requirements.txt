@@ -5,5 +5,3 @@ colorlog==4.1.0
 pyyaml==5.3.1
 schedule==0.6.0
 delta==0.4.2
-
-yarl==1.4.2 # Versions above this give a "requote" error on startup

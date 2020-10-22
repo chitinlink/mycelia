@@ -12,7 +12,7 @@ Bodiam moderation bot, written in Python 3, using [discord.py] and [TinyDB].
 
 ## Running
 
-You need [Python 3].
+You need [Python 3.8].
 
 You can install the requirements with:
 ```
