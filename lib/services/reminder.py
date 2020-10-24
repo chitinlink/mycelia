@@ -41,7 +41,6 @@ class Reminder(Cog):
         return
 
       msg = match[2].strip()
-      #TODO make sure this matches properly and add error handling
       # ./lib/schema/reminder.json
       new_reminder = {
         "datetime": when.strftime(TIME_FORMAT),
@@ -103,6 +102,11 @@ class Reminder(Cog):
         )
 
       await ctx.send(out, allowed_mentions=AllowedMentions.none())
+
+  @reminder.command(aliases=["la"])
+  async def listall(self, ctx: commands.Context):
+    """ (Restricted to moderators) See all reminders """
+
 
   @reminder.command(aliases=["r"])
   async def remove(self, ctx: commands.Context, reminder_id: int):
