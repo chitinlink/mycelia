@@ -155,7 +155,15 @@ class Blacklist(Cog):
 
       # If there are any matches:
       if matches:
-        await self.bot.post_notice(
-          kind="scan_match",
-          data=matches,
-          original_message=message)
+        names = ", ".join(map(lambda m: f"`{m['name']}`", matches))
+
+        entry = "<entry>"
+        if len(matches) == 1: entry = matches[0]["name"]
+
+        await self._notice_channel.send(
+          f"**Blacklist match:** {names}\n" +
+          f"by {message.author.mention} in {message.channel.mention}:\n" +
+          md_quote(message.content) + "\n" +
+          f"{message.jump_url}\n" +
+          f"Use `blacklist view {entry}` for details"
+        )

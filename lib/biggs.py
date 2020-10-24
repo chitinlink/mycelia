@@ -71,33 +71,3 @@ class Biggs(commands.Bot):
 
     # Done loading
     log.info(f"Logged on as {self.user}!")
-
-  # FIXME stale, mostly unused
-  # It's better for each cog to just do things interdependently, or use the
-  # bot/ctx as argument in a method in lib.utils
-  # remove Any
-  async def post_notice(self, kind: str = "plain", original_message: discord.Message = None, data: Any = None):
-    # Plain message
-    if kind == "plain":
-      await self._notice_channel.send(data)
-
-    # Scan match
-    elif kind == "scan_match":
-      names = ", ".join(map(lambda m: f"`{m['name']}`", data))
-
-      entry = "<entry>"
-      if len(data) == 1: entry = data[0]["name"]
-
-      await self._notice_channel.send(
-        f"**Blacklist match:** {names}\n" +
-        f"by {original_message.author.mention} in {original_message.channel.mention}:\n" +
-        md_quote(original_message.content) + "\n" +
-        f"{original_message.jump_url}\n" +
-        f"Use `blacklist view {entry}` for details"
-      )
-
-    # Unknown?
-    else:
-      exc = f"Unknown post_notice kind: {kind}"
-      log.error(exc)
-      raise ValueError(exc)
