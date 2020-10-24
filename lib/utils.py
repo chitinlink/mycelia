@@ -1,5 +1,5 @@
 from discord.ext.commands import Context, Cog as dCog
-from discord import Emoji, PartialEmoji, Reaction
+from discord import Emoji, PartialEmoji, Reaction, Guild
 from datetime import timedelta
 from typing import Union
 import logging
@@ -67,6 +67,10 @@ def md_spoiler(text: str) -> str:
     Note issue #30.
   """
   return f"||{text}||"
+
+def fmt_guild(guild: Guild) -> str:
+  """ Formats a Guild into a consistent style """
+  return f"<{guild.id}> {guild.name} ({guild.member_count} members)"
 
 # Etc
 async def react(ctx: Context, reaction: Union[Emoji, Reaction, PartialEmoji, str]):

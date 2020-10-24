@@ -9,7 +9,7 @@ from tinydb import TinyDB, where
 from discord.ext import tasks, commands
 
 # Local dependencies
-from lib.utils import md_quote
+from lib.utils import fmt_guild
 # Services
 from lib.services.core import Core
 from lib.services.blacklist import Blacklist
@@ -71,3 +71,17 @@ class Biggs(commands.Bot):
 
     # Done loading
     log.info(f"Logged on as {self.user}!")
+
+    log.info("Biggs is a member of these guilds:")
+    for guild in self.guilds:
+      log.info(f"• {fmt_guild(guild)}")
+
+  async def on_guild_join(self, guild: discord.Guild):
+    log.info(f"Biggs has joined the guild {fmt_guild(guild)}.")
+
+  async def on_guild_remove(self, guild: discord.Guild):
+    log.info(f"Biggs has been removed from the guild {fmt_guild(guild)}.")
+
+  async def on_guild_update(self, before: discord.Guild, after: discord.Guild):
+    if before.name != after.name:
+      log.info(f"The guild {before.name} has been renamed to {after.name}.")
