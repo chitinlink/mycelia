@@ -6,13 +6,14 @@ from discord.ext import commands, tasks
 from asyncio import create_task as await_this
 import schedule
 
-from lib.utils import is_mod, in_guild, react, md_list, md_code, TIME_FORMAT
+from lib.utils import Cog, is_mod, in_guild, react, md_list, md_code, TIME_FORMAT
 
 #TODO: add remove to sch
 #TODO: add purge handling
 
-class Schedule(commands.Cog):
+class Schedule(Cog):
   def __init__(self, bot: commands.Bot):
+    super().__init__()
     self.bot = bot
     self._schedule = bot._db.table("schedule")
     self._schedule_task_schema = json.load(open("./lib/schema/schedule_task.json"))

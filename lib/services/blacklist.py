@@ -7,12 +7,13 @@ from discord.ext import commands
 from tinydb import where
 import jsonschema
 
-from lib.utils import is_mod, in_guild, bot_is_ready, not_ignored_channel, not_from_bot, in_guild, md_quote, react
+from lib.utils import Cog, is_mod, in_guild, bot_is_ready, not_ignored_channel, not_from_bot, in_guild, md_quote, react
 
-class Blacklist(commands.Cog):
-  def __init__(self, bot: commands.Bot):
+class Blacklist(Cog):
+  def __init__(self, bot):
+    super().__init__()
     self.bot = bot
-    self._blacklist = bot._db.table("blacklist")
+    self._blacklist = self.bot._db.table("blacklist")
     self._blacklist_member_schema = json.load(open("./lib/schema/blacklist_member.json"))
 
   # You must be a moderator to run any of these commands

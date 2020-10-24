@@ -7,14 +7,15 @@ from discord import AllowedMentions
 from discord.ext import commands, tasks
 import delta
 
-from lib.utils import in_guild, react, md_list_item, md_code, readable_delta, TIME_FORMAT
+from lib.utils import Cog, in_guild, react, md_list_item, md_code, readable_delta, TIME_FORMAT
 
 TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 #TODO moderator tools for dealing with reminders?
 
-class Reminder(commands.Cog):
+class Reminder(Cog):
   def __init__(self, bot: commands.Bot):
+    super().__init__()
     self.bot = bot
     self._reminders = bot._db.table("reminders")
     self._reminder_schema = json.load(open("./lib/schema/reminder.json"))

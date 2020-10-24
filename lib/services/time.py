@@ -1,13 +1,10 @@
-import logging
 import typing
 import datetime
 import re
 
 from discord.ext import commands
 
-from lib.utils import in_guild
-
-log = logging.getLogger("Biggs")
+from lib.utils import Cog, in_guild
 
 # Dict of UTC offsets -> associated timezone abbreviations
 tzlist = {
@@ -84,7 +81,7 @@ def timedelta_to_str(delta: datetime.timedelta) -> str:
   if mm: out += ":%02d" % mm
   return out
 
-class Time(commands.Cog):
+class Time(Cog):
   # Guild-only
   async def cog_check(self, ctx: commands.Context):
     return in_guild(ctx)

@@ -4,9 +4,9 @@ from random import choice
 from discord import File
 from discord.ext import commands
 
-from lib.utils import in_guild
+from lib.utils import Cog, in_guild
 
-class Fun(commands.Cog):
+class Fun(Cog):
   # Guild-only
   async def cog_check(self, ctx: commands.Context):
     return in_guild(ctx)

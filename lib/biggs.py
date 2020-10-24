@@ -1,10 +1,6 @@
 import logging
 import json
-import re
-import sys
-from math import ceil
 from typing import Any
-from functools import reduce
 
 # External dependencies
 import discord
@@ -27,8 +23,16 @@ from lib.services.fun import Fun
 # Logging
 log = logging.getLogger("Biggs")
 
+# Intents
+# https://discordpy.readthedocs.io/en/stable/intents.html
+intents = discord.Intents.default()
+# Need members intent for lib.utils.is_guild_member
+intents.members = True
+
 class Biggs(commands.Bot):
-  def setup(self, config: dict):
+  def __init__(self, config: dict, *bot_args):
+    super().__init__(command_prefix=config["command_prefix"], intents=intents, *bot_args)
+
     self._config = config
     self._done_setup = False
 
@@ -51,7 +55,7 @@ class Biggs(commands.Bot):
       self._reactions = { key: parse_reactions(_id) for key, _id in self._config["reactions"].items() }
 
       # Bot internals -- do not remove this
-      self.add_cog(Core(self))
+      self.add_cog(Core())
 
       # Commands
       self.add_cog(Blacklist(self))
@@ -71,6 +75,7 @@ class Biggs(commands.Bot):
   # FIXME stale, mostly unused
   # It's better for each cog to just do things interdependently, or use the
   # bot/ctx as argument in a method in lib.utils
+  # remove Any
   async def post_notice(self, kind: str = "plain", original_message: discord.Message = None, data: Any = None):
     # Plain message
     if kind == "plain":

@@ -55,11 +55,7 @@ try:
 
   # Create an instance of Biggs
   log.info("Instanciating Biggs...")
-  biggs = Biggs(command_prefix=config["command_prefix"])
-
-  # Start Biggs
-  log.info("Starting Biggs...")
-  biggs.setup(config)
+  biggs = Biggs(config)
 
 # Log exceptions
 except Exception as exc: # FIXME

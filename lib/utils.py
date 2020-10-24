@@ -1,6 +1,8 @@
-from discord.ext.commands import Context
+from discord.ext.commands import Context, Cog as dCog
+from discord import Emoji, PartialEmoji, Reaction
 from datetime import timedelta
 from typing import Union
+import logging
 
 # Constants
 TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
@@ -67,9 +69,12 @@ def md_spoiler(text: str) -> str:
   return f"||{text}||"
 
 # Etc
-async def react(ctx: Context, reaction: str):
+async def react(ctx: Context, reaction: Union[Emoji, Reaction, PartialEmoji, str]):
   """ Add reaction to given context. """
-  await ctx.message.add_reaction(ctx.bot._reactions[reaction])
+  if type(reaction) is str and reaction in ctx.bot._reactions:
+    await ctx.message.add_reaction(ctx.bot._reactions[reaction])
+  else:
+    await ctx.message.add_reaction(reaction)
 
 # revised from zekel's answer at SO:
 # https://stackoverflow.com/a/5333305/12086004
@@ -107,3 +112,9 @@ def readable_delta(delta: timedelta) -> str:
 
   if future: return "in " + out
   else:      return out + " ago"
+
+class Cog(dCog):
+  """ <discord.ext.commands.Cog> superclass that adds log field  """
+  def __init__(self):
+    self.log = logging.getLogger("Biggs")
+    self.log.info(f"Loading service: {self.__class__.__name__}")

@@ -4,10 +4,11 @@ from discord import Role as dRole
 from discord.ext import commands
 from tinydb import where
 
-from lib.utils import is_mod, in_guild, md_list, md_code, react
+from lib.utils import Cog, is_mod, in_guild, md_list, md_code, react
 
-class Role(commands.Cog):
+class Role(Cog):
   def __init__(self, bot: commands.Bot):
+    super().__init__()
     self._roles = bot._db.table("roles")
 
   # Guild-only
