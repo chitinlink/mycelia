@@ -44,7 +44,7 @@ def md_quote(text: str) -> str:
 
 def md_list(lst: iter) -> str:
   """ Formats a list of strings into a consistent style """
-  return "\n".join([md_list_item(i) for i in lst])
+  return "".join([md_list_item(i) for i in lst])
 
 def md_list_item(text: str) -> str:
   """ Formats a single line of a consistent-style list """
