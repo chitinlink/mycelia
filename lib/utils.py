@@ -70,7 +70,14 @@ def md_spoiler(text: str) -> str:
 
 def fmt_guild(guild: Guild) -> str:
   """ Formats a Guild into a consistent style """
-  return f"<{guild.id}> {guild.name} ({guild.member_count} members)"
+  return f"<{guild.id}> {guild.name} ({guild.member_count} member{plur(guild.member_count)})"
+
+def plur(t: Union[int, list, dict]) -> str:
+  """ PLuralizes based on quantity. """
+  if type(t) is int  and t      != 1: return "s"
+  if type(t) is list and len(t) != 1: return "s"
+  if type(t) is dict and len(t) != 1: return "s"
+  return ""
 
 # Etc
 async def react(ctx: Context, reaction: Union[Emoji, Reaction, PartialEmoji, str]):
@@ -84,9 +91,6 @@ async def react(ctx: Context, reaction: Union[Emoji, Reaction, PartialEmoji, str
 # https://stackoverflow.com/a/5333305/12086004
 def readable_delta(delta: timedelta) -> str:
   """ Returns a human-readable timedelta. """
-
-  def plur(num: int) -> str:
-    return "" if num == 1 else "s"
 
   future = False
   if delta < timedelta(0):

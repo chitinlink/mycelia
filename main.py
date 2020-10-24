@@ -6,6 +6,7 @@ from datetime import datetime
 import logging
 import logging.config
 import os
+import subprocess
 
 # Local dependencies
 from lib.biggs import Biggs
@@ -44,6 +45,10 @@ try:
       lconfig = yaml.load(y, Loader=yaml.FullLoader) # type: dict
       logging.config.dictConfig(lconfig)
     log = logging.getLogger("Biggs")
+    v = subprocess.check_output(
+      "git rev-parse --short HEAD".split(" ")
+    ).decode("utf-8").strip()
+    log.info(f"Biggs commit {v}")
 
     # Write current date to file so we can reference it later when we archive it
     with open(path_latest, "w", encoding="utf-8") as f:
@@ -54,7 +59,6 @@ try:
       os.makedirs(f"{config['tinydb_path']}")
 
   # Create an instance of Biggs
-  log.info("Instanciating Biggs...")
   biggs = Biggs(config)
 
 # Log exceptions
