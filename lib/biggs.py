@@ -95,6 +95,7 @@ class Biggs(commands.Bot):
   # Log messages
   async def on_message(self, message: discord.Message):
     log.msg(f"{message.channel}§{message.author}: {message.content}")
+    await self.process_commands(message)
 
   # Log errors
   async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
