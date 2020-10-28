@@ -123,7 +123,7 @@ class Time(Cog):
         _utc_offset = f" (UTC{timedelta_to_str(utc_offset + delta)})"
 
       time = datetime.datetime.utcnow() + utc_offset + delta
-      await ctx.send(time.strftimea(f"%I:%M%p {tz}{timedelta_to_str(delta)}{_utc_offset}"))
+      await ctx.send(time.strftime(f"%I:%M%p {tz}{timedelta_to_str(delta)}{_utc_offset}"))
     else:
       await ctx.send(f"That's definitely not a timezone. Try something like \"EST+5\".")
 
