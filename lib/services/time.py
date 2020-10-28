@@ -86,13 +86,8 @@ class Time(Cog):
   async def cog_check(self, ctx: commands.Context):
     return in_guild(ctx)
 
-  @commands.group(aliases=["t"])
-  async def time(self, ctx: commands.Context):
-    """ Time(zone) related information """
-    if ctx.invoked_subcommand is None: await ctx.send_help("time")
-
-  @time.command()
-  async def now(self, ctx: commands.Context, *, _input: typing.Optional[str] = "UTC"):
+  @commands.group(aliases=["t"], invoke_without_command=True)
+  async def time(self, ctx: commands.Context, *, _input: typing.Optional[str] = "UTC"):
     """ Show the current time, in UTC by default """
 
     # Parse input
@@ -128,7 +123,7 @@ class Time(Cog):
         _utc_offset = f" (UTC{timedelta_to_str(utc_offset + delta)})"
 
       time = datetime.datetime.utcnow() + utc_offset + delta
-      await ctx.send(time.strftime(f"%I:%M%p {tz}{timedelta_to_str(delta)}{_utc_offset}"))
+      await ctx.send(time.strftimea(f"%I:%M%p {tz}{timedelta_to_str(delta)}{_utc_offset}"))
     else:
       await ctx.send(f"That's definitely not a timezone. Try something like \"EST+5\".")
 
