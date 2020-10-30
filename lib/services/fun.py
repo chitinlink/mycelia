@@ -36,8 +36,16 @@ class Fun(Cog):
             for embed in embeds:
               if embed.title:       embed.title = owo.owoify(embed.title)
               if embed.description: embed.description = owo.owoify(embed.description)
-              if embed.footer:      embed.set_footer(text=owo.owoify(embed.footer.text))
-              if embed.author:      embed.set_author(name=owo.owoify(embed.author.name))
+              if embed.footer:
+                embed.set_footer(
+                  text=owo.owoify(embed.footer.text),
+                  icon_url=embed.footer.icon_url
+                )
+              if embed.author:
+                embed.set_author(
+                  name=owo.owoify(embed.author.name),
+                  icon_url=embed.footer.icon_url
+                )
               for f in range(len(embed.fields)):
                 embed.set_field_at(f,
                   name=owo.owoify(embed.fields[f].name),
