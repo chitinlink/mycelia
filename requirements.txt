@@ -5,3 +5,4 @@ colorlog==4.1.0
 pyyaml==5.3.1
 schedule==0.6.0
 delta==0.4.2
+owoify==0.3.1
