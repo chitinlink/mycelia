@@ -7,7 +7,6 @@ from discord.ext import commands
 from lib.utils import Cog, in_guild
 
 from owoify import Owoifator
-
 owo = Owoifator()
 
 class Fun(Cog):
@@ -29,5 +28,6 @@ class Fun(Cog):
     async with ctx.typing():
       async for msg in ctx.history(limit=1, before=ctx.message):
         if msg.author != ctx.bot.user:
-          await ctx.send(owo.owoify(msg.content))
           await ctx.message.delete()
+          owomsg = owo.owoify(msg.content)
+          if owomsg != msg: await ctx.send(owomsg)
