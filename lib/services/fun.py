@@ -50,5 +50,5 @@ class Fun(Cog):
               for e in embeds[1:]:
                 await ctx.send(embed=e, allowed_mentions=AllowedMentions.none())
 
-          elif owomsg.content != msg.content:
+          elif owomsg != msg.content:
             await ctx.send(owomsg, allowed_mentions=AllowedMentions.none())
