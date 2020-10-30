@@ -100,7 +100,11 @@ class Biggs(commands.Bot):
   # Log errors
   async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
     name = error.__class__.__name__
-    if isinstance(error, (commands.CheckFailure, commands.DisabledCommand, commands.CommandNotFound, commands.CommandOnCooldown)):
+    if isinstance(error, (
+      commands.CheckFailure,
+      commands.DisabledCommand,
+      commands.CommandNotFound,
+      commands.CommandOnCooldown)):
       log.warning(f"{name}: {error}")
     else:
       log.error(f"Command error ({name}): {error}")
