@@ -26,7 +26,7 @@ class Schedule(Cog):
 
   # Guild-only
   async def cog_check(self, ctx: commands.Context):
-    return in_guild(ctx)
+    return in_guild(ctx) and is_mod(ctx)
 
   # Set up one task
   def setup_task(self, task):
@@ -53,7 +53,6 @@ class Schedule(Cog):
     if ctx.invoked_subcommand is None: await ctx.send_help("schedule")
 
   @schedule.command(aliases=["a"])
-  @commands.check(is_mod)
   async def add(self, ctx: commands.Context, *, data: str):
     """ Adds a task to the schedule """
     try:
@@ -71,7 +70,6 @@ class Schedule(Cog):
       await ctx.send(f"JSON Error: {msg}")
 
   @schedule.command(aliases=["l"])
-  @commands.check(is_mod)
   async def list(self, ctx: commands.Context):
     """ List existing tasks """
     await ctx.send(md_list(self._schedule.all()))
