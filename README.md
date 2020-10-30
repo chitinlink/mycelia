@@ -1,7 +1,7 @@
-<img src="./.github/biggs.png" width="36" height="36"> Biggs
+<img src="./.readme/biggs.png" width="36" height="36"> Biggs
 ============================================================
 
-Bodiam moderation bot, written in Python 3, using [discord.py] and [TinyDB].
+Bodiam moderation bot, written in Python 3, using [discord.py] ([See full dependency list](./requirements.txt))
 
 - [Running](#running)
   - [Installing](#installing)
@@ -83,7 +83,6 @@ Please use [Editorconfig].
 There is an included [VS Code `launch.json`][vscode-debugging] file for debugging.
 
 [discord.py]:       https://github.com/Rapptz/discord.py
-[TinyDB]:           https://github.com/msiemens/tinydb/
 [Python 3]:         https://www.python.org/
 [discord-apps]:     https://discord.com/developers/applications/
 [systemd-user]:     https://wiki.archlinux.org/index.php/Systemd/User
