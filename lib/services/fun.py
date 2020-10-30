@@ -1,7 +1,7 @@
 from os import listdir
 from random import choice
 
-from discord import File
+from discord import File, AllowedMentions
 from discord.ext import commands
 
 from lib.utils import Cog, in_guild
@@ -30,4 +30,25 @@ class Fun(Cog):
         if msg.author != ctx.bot.user:
           await ctx.message.delete()
           owomsg = owo.owoify(msg.content)
-          if owomsg != msg: await ctx.send(owomsg)
+
+          if len(msg.embeds) > 0:
+            embeds = msg.embeds
+            for embed in embeds:
+              if embed.title:       embed.title = owo.owoify(embed.title)
+              if embed.description: embed.description = owo.owoify(embed.description)
+              if embed.footer:      embed.set_footer(text=owo.owoify(embed.footer.text))
+              if embed.author:      embed.set_author(name=owo.owoify(embed.author.name))
+              for f in range(len(embed.fields)):
+                embed.set_field_at(f,
+                  name=owo.owoify(embed.fields[f].name),
+                  value=owo.owoify(embed.fields[f].value)
+                )
+
+            await ctx.send(owomsg, embed=embeds[0], allowed_mentions=AllowedMentions.none())
+
+            if len(embeds) > 1:
+              for e in embeds[1:]:
+                await ctx.send(embed=e, allowed_mentions=AllowedMentions.none())
+
+          elif owomsg != msg:
+            await ctx.send(owomsg, allowed_mentions=AllowedMentions.none())
