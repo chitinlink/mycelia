@@ -3,13 +3,27 @@ import datetime
 import re
 
 import jsonschema
-from discord import AllowedMentions
+from discord import AllowedMentions, Member
 from discord.ext import commands, tasks
 import delta
 
-from lib.utils import Cog, in_guild, react, md_list_item, md_code, readable_delta, TIME_FORMAT
+from lib.utils import Cog, is_mod, in_guild, react, md_list_item, md_code, readable_delta, TIME_FORMAT
 
 TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
+
+def remsort(now):
+  def _remsort(reminder):
+    return - (now - datetime.datetime.strptime(reminder["datetime"], TIME_FORMAT))
+  return _remsort
+
+def remshort(reminder):
+  _lines = reminder["message"].split("\n")
+  msg = _lines[0]
+  if len(msg) > 60:
+    msg = msg[:60] + " (…)"
+  elif len(_lines) > 1:
+    msg += " (…)"
+  return msg
 
 #TODO moderator tools for dealing with reminders?
 
@@ -30,7 +44,6 @@ class Reminder(Cog):
   @commands.group(aliases=["rem"], invoke_without_command=True)
   async def reminder(self, ctx: commands.Context, *, reminder: str):
     """ Set a reminder, ie ",rem 2 hours: Wake up!" """
-    # if ctx.invoked_subcommand is not None:
     match = re.match("\A([^:\n]+):(.+)\Z", reminder, re.S)
     if match:
       try:
@@ -74,10 +87,12 @@ class Reminder(Cog):
   async def list(self, ctx: commands.Context):
     """ See all your reminders. """
     out = ""
-    now = datetime.datetime.now()
     your_reminders = sorted(
-      filter(lambda reminder: reminder["meta"]["member"] == ctx.author.id, self._reminders.all()),
-      key=lambda reminder: - (now - datetime.datetime.strptime(reminder["datetime"], TIME_FORMAT))
+      filter(
+        lambda reminder: reminder["meta"]["member"] == ctx.author.id,
+        self._reminders.all()
+      ),
+      key=remsort(datetime.datetime.now())
     )
 
     if len(your_reminders) == 0:
@@ -85,34 +100,73 @@ class Reminder(Cog):
     else:
       for reminder in your_reminders:
         then = datetime.datetime.strptime(reminder["datetime"], TIME_FORMAT)
-
-        # Only first line, 60 chars max
-        _lines = reminder["message"].split("\n")
-        msg = _lines[0]
-        if len(msg) > 60:
-          msg = msg[:60] + " (…)"
-        elif len(_lines) > 1:
-          msg += " (…)"
+        msg = remshort(reminder)
 
         out += md_list_item(
           f"{md_code(str(reminder.doc_id).rjust(3))} - " +
           f"{md_code(reminder['datetime'])}, " +
-          f"{readable_delta(now - then)}:\n" +
+          f"{readable_delta(datetime.datetime.now() - then)}:\n" +
           f"    {msg}"
         )
 
       await ctx.send(out, allowed_mentions=AllowedMentions.none())
 
   @reminder.command(aliases=["la"])
+  @commands.check(is_mod)
   async def listall(self, ctx: commands.Context):
-    """ (Restricted to moderators) See all reminders """
+    """ (Restricted to moderators) List all reminders. """
 
+    if len(self._reminders.all()) == 0:
+      await ctx.send("There are no reminders.", delete_after=10)
+      return
+
+    out = ""
+    for reminder in sorted(self._reminders.all(), key=remsort(datetime.datetime.now())):
+      then = datetime.datetime.strptime(reminder["datetime"], TIME_FORMAT)
+      msg = remshort(reminder)
+
+      out += md_list_item(
+        f"{md_code(str(reminder.doc_id).rjust(3))} - " +
+        f"{md_code(reminder['datetime'])}, " +
+        f"{readable_delta(datetime.datetime.now() - then)} " +
+        f"(<@{reminder['meta']['member']}>):\n"
+        f"    {msg}"
+      )
+
+    await ctx.send(out, allowed_mentions=AllowedMentions.none())
+
+  @reminder.command()
+  @commands.check(is_mod)
+  async def purge(self, ctx: commands.Context, user: Member):
+    """ (Restricted to moderators) Purge all of a user's reminders. """
+    rems = list(map(
+      lambda r: r.doc_id,
+      filter(
+        lambda r: r["meta"]["member"] == user.id,
+        self._reminders.all()
+      )
+    ))
+    self._reminders.remove(doc_ids=rems)
+    await react(ctx, "confirm")
+    await ctx.send(f"Purged {len(rems)} reminders.", delete_after=10)
+
+  @reminder.command()
+  @commands.check(is_mod)
+  async def delete(self, ctx: commands.Context, reminder_id: int):
+    """ (Restricted to moderators) Delete any reminder. """
+    reminder = self._reminders.get(doc_id=reminder_id)
+    if reminder is not None:
+      self._reminders.remove(doc_ids=[reminder_id])
+      await react(ctx, "confirm")
+    else:
+      await react(ctx, "deny")
+      await ctx.send("That's not a reminder.", delete_after=10)
 
   @reminder.command(aliases=["r"])
   async def remove(self, ctx: commands.Context, reminder_id: int):
     """ Forget one of your reminders. Check the id using ,rem list first. """
     reminder = self._reminders.get(doc_id=reminder_id)
-    if reminder is None:
+    if reminder is not None:
       if reminder["meta"]["member"] == ctx.author.id:
         self._reminders.remove(doc_ids=[reminder_id])
         await react(ctx, "confirm")
