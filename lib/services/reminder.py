@@ -9,16 +9,17 @@ import delta
 
 from lib.utils import Cog, is_mod, in_guild, react, md_list_item, md_code, readable_delta, TIME_FORMAT
 
-def remsort(now):
+def remsort(now: datetime):
   def _remsort(reminder):
     return - (now - datetime.datetime.strptime(reminder["datetime"], TIME_FORMAT))
   return _remsort
 
-def remshort(reminder):
+def remshort(reminder: dict):
   _lines = reminder["message"].split("\n")
   msg = _lines[0]
   if   len(msg) > 60:   return msg[:60] + " (…)"
   elif len(_lines) > 1: return msg + " (…)"
+  return msg
 
 class Reminder(Cog):
   def __init__(self, bot: commands.Bot):
