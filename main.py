@@ -52,7 +52,7 @@ try:
 
     # Write current date to file so we can reference it later when we archive it
     with open(path_latest, "w", encoding="utf-8") as f:
-      f.write(datetime.now().strftime("%Y-%m-%d") + "\n")
+      f.write(datetime.utcnow().strftime("%Y-%m-%d") + "\n")
 
     # Make sure data/ exists
     if not os.path.exists(f"{config['tinydb_path']}"):

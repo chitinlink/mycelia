@@ -35,13 +35,13 @@ class Reminder(Cog):
     return in_guild(ctx)
 
   # Reminders
-  @commands.group(aliases=["rem"], invoke_without_command=True)
+  @commands.group(aliases=["rm"], invoke_without_command=True)
   async def reminder(self, ctx: commands.Context, *, reminder: str):
     """ Set a reminder, ie ",rem 2 hours: Wake up!" """
     match = re.match("\A([^:\n]+):(.+)\Z", reminder, re.S)
     if match:
       try:
-        when = datetime.datetime.now() + delta.parse(match[1])
+        when = datetime.datetime.utcnow() + delta.parse(match[1])
       except Exception as exc:
         await react(ctx, "deny")
         await ctx.send(f"Error: {exc}", delete_after=10)
@@ -86,7 +86,7 @@ class Reminder(Cog):
         lambda reminder: reminder["meta"]["member"] == ctx.author.id,
         self._reminders.all()
       ),
-      key=remsort(datetime.datetime.now())
+      key=remsort(datetime.datetime.utcnow())
     )
 
     if len(your_reminders) == 0:
@@ -99,7 +99,7 @@ class Reminder(Cog):
         out += md_list_item(
           f"{md_code(str(reminder.doc_id).rjust(3))} - " +
           f"{md_code(reminder['datetime'])}, " +
-          f"{readable_delta(datetime.datetime.now() - then)}:\n" +
+          f"{readable_delta(datetime.datetime.utcnow() - then)}:\n" +
           f"    {msg}"
         )
 
@@ -115,14 +115,14 @@ class Reminder(Cog):
       return
 
     out = ""
-    for reminder in sorted(self._reminders.all(), key=remsort(datetime.datetime.now())):
+    for reminder in sorted(self._reminders.all(), key=remsort(datetime.datetime.utcnow())):
       then = datetime.datetime.strptime(reminder["datetime"], TIME_FORMAT)
       msg = remshort(reminder)
 
       out += md_list_item(
         f"{md_code(str(reminder.doc_id).rjust(3))} - " +
         f"{md_code(reminder['datetime'])}, " +
-        f"{readable_delta(datetime.datetime.now() - then)} " +
+        f"{readable_delta(datetime.datetime.utcnow() - then)} " +
         f"(<@{reminder['meta']['member']}>):\n"
         f"    {msg}"
       )
@@ -174,7 +174,7 @@ class Reminder(Cog):
   async def announce_reminder(self, reminder: dict):
     await self.bot._guild.get_channel(reminder["channel"]).send(
       f"Reminder for <@{reminder['meta']['member']}> " +
-      f"({readable_delta(datetime.datetime.now() - datetime.datetime.strptime(reminder['meta']['datetime'], TIME_FORMAT))}):\n" +
+      f"({readable_delta(datetime.datetime.utcnow() - datetime.datetime.strptime(reminder['meta']['datetime'], TIME_FORMAT))}):\n" +
       f"{reminder['message']}\n" +
       f"https://discord.com/channels/{self.bot._guild.id}/{reminder['channel']}/{reminder['meta']['message']}"
     )
@@ -184,7 +184,7 @@ class Reminder(Cog):
     # Check all reminders
     for reminder in self._reminders.all():
       # If they are pending
-      if datetime.datetime.now() - datetime.datetime.strptime(reminder["datetime"], TIME_FORMAT) >= datetime.timedelta(0):
+      if datetime.datetime.utcnow() - datetime.datetime.strptime(reminder["datetime"], TIME_FORMAT) >= datetime.timedelta(0):
         # Announce them
         await self.announce_reminder(reminder)
         # And then remove them from the table
