@@ -62,8 +62,6 @@ class Biggs(commands.Bot):
 
       self._reactions = { key: parse_reactions(_id) for key, _id in self._config["reactions"].items() }
 
-      self.add_command(self.version_command)
-
       # Services
       self.add_cog(Blacklist(self))
       self.add_cog(Role(self))
