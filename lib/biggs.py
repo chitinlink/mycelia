@@ -10,7 +10,7 @@ from tinydb import TinyDB, where
 from discord.ext import tasks, commands
 
 # Local dependencies
-from lib.utils import fmt_guild, bot_is_ready, not_ignored_channel, not_from_bot
+from lib.utils import Cog, fmt_guild, bot_is_ready, not_ignored_channel, not_from_bot
 # Services
 from lib.services.blacklist import Blacklist
 from lib.services.role import Role
@@ -32,6 +32,17 @@ logging.Logger.msg = msg
 intents = discord.Intents.default()
 # Need members intent for lib.utils.is_guild_member
 intents.members = True
+
+class Core(Cog):
+  @commands.command(name="version", aliases=["v", "hello"])
+  async def version_command(self, ctx: commands.Context):
+    """ Display current bot version. """
+    _date = subprocess.check_output(
+      "git log -1 --date=relative --format=%ad".split(" ")
+    ).decode("utf-8").strip()
+    await ctx.send(
+      f"{ctx.bot._reactions['header']} Biggs (commit `{ctx.bot.version}`) — Last updated {_date}"
+    )
 
 class Biggs(commands.Bot):
   def __init__(self, config: dict, *bot_args):
@@ -63,6 +74,7 @@ class Biggs(commands.Bot):
       self._reactions = { key: parse_reactions(_id) for key, _id in self._config["reactions"].items() }
 
       # Services
+      self.add_cog(Core())
       self.add_cog(Blacklist(self))
       self.add_cog(Role(self))
       self.add_cog(Time())
@@ -118,14 +130,4 @@ class Biggs(commands.Bot):
       bot_is_ready(ctx) and
       not_ignored_channel(ctx) and
       not_from_bot(ctx)
-    )
-
-  @commands.command(name="version", aliases=["v", "hello"])
-  async def version_command(self, ctx: commands.Context):
-    """ Display current bot version. """
-    _date = subprocess.check_output(
-      "git log -1 --date=relative --format=%ad".split(" ")
-    ).decode("utf-8").strip()
-    await ctx.send(
-      f"{ctx.bot._reactions['header']} Biggs (commit `{self.version}`) — Last updated {_date}"
     )
