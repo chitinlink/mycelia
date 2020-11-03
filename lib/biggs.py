@@ -2,8 +2,8 @@ import logging
 import subprocess
 
 # External dependencies
-import discord
 from tinydb import TinyDB
+from discord import Intents
 from discord.ext import tasks, commands
 
 # Local dependencies
@@ -22,7 +22,7 @@ from lib.services.fun import Fun
 
 # Intents
 # https://discordpy.readthedocs.io/en/stable/intents.html
-intents = discord.Intents.default()
+intents = Intents.default()
 # Need members intent for lib.utils.checks.is_guild_member
 intents.members = True
 
