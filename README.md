@@ -12,7 +12,7 @@ Bodiam moderation bot, written in Python 3, using [discord.py] ([See full depend
 
 ## Running
 
-You need [Python] 3.8.
+You need [Python 3.8][python].
 
 You can install the requirements with:
 ```
@@ -83,7 +83,7 @@ Please use [Editorconfig].
 There is an included [VS Code `launch.json`][vscode-debugging] file for debugging.
 
 [discord.py]:       https://github.com/Rapptz/discord.py
-[Python 3]:         https://www.python.org/
+[python]:           https://www.python.org/
 [discord-apps]:     https://discord.com/developers/applications/
 [systemd-user]:     https://wiki.archlinux.org/index.php/Systemd/User
 [Editorconfig]:     https://editorconfig.org/
