@@ -128,7 +128,7 @@ class Biggs(commands.Bot):
     # Log all commands invoked
     log.info(f"Command invoked: {ctx.command.qualified_name}")
 
-    # "Message funnel"
+    # "Command funnel"
     # Ensure all of these basic checks pass
     return (
       is_bot_ready(ctx) and

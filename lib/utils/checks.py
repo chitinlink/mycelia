@@ -1,15 +1,15 @@
 from discord.ext.commands import Context
 
 def is_bot_ready(ctx: Context) -> bool:
-  """ True if the bot is ready. Included in the message funnel. """
+  """ True if the bot is ready. Included in the command funnel. """
   return ctx.bot.is_ready()
 
 def is_not_from_bot(ctx: Context) -> bool:
-  """ Checks that the author for the given context is not a bot. Included in the message funnel. """
+  """ Checks that the author for the given context is not a bot. Included in the command funnel. """
   return not ctx.author.bot
 
 def is_not_ignored_channel(ctx: Context) -> bool:
-  """ Checks that the given context is not in an ignored channel. Included in the message funnel. """
+  """ Checks that the given context is not in an ignored channel. Included in the command funnel. """
   return ctx.channel not in ctx.bot._ignored_channels
 
 def in_guild(ctx: Context) -> bool:
