@@ -1,6 +1,7 @@
 from discord.ext import commands
 
-from lib.utils import Cog, in_dms, is_guild_member, react
+from lib.utils.etc import Cog, react
+from lib.utils.checks import in_dms, is_guild_member
 
 class Anon(Cog):
   @commands.command()

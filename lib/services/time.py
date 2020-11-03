@@ -4,7 +4,8 @@ import re
 
 from discord.ext import commands
 
-from lib.utils import Cog, in_guild
+from lib.utils.etc import Cog
+from lib.utils.checks import in_guild
 
 # Dict of UTC offsets -> associated timezone abbreviations
 tzlist = {

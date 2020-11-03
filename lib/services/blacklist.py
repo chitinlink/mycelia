@@ -7,7 +7,9 @@ from discord.ext import commands
 from tinydb import where
 import jsonschema
 
-from lib.utils import Cog, is_mod, in_guild, bot_is_ready, not_ignored_channel, not_from_bot, in_guild, md_quote, react
+from lib.utils.etc import Cog, react
+from lib.utils.checks import is_mod, in_guild, bot_is_ready, not_ignored_channel, not_from_bot, in_guild
+from lib.utils.text import md_quote
 
 class Blacklist(Cog):
   def __init__(self, bot):

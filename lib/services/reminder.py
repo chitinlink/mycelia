@@ -7,7 +7,9 @@ from discord import AllowedMentions, Member
 from discord.ext import commands, tasks
 import delta
 
-from lib.utils import Cog, is_mod, in_guild, react, md_list_item, md_code, readable_delta, TIME_FORMAT
+from lib.utils.etc import Cog, react, readable_delta, TIME_FORMAT
+from lib.utils.checks import is_mod, in_guild
+from lib.utils.text import md_list_item, md_code
 
 def remsort(now: datetime):
   def _remsort(reminder):

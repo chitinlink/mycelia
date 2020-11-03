@@ -6,7 +6,9 @@ from discord.ext import commands, tasks
 from asyncio import create_task as await_this
 import schedule
 
-from lib.utils import Cog, is_mod, in_guild, react, md_list, md_code, TIME_FORMAT
+from lib.utils.etc import Cog, react, TIME_FORMAT
+from lib.utils.checks import is_mod, in_guild
+from lib.utils.text import md_list, md_code
 
 #TODO: add remove to sch
 #TODO: add purge handling

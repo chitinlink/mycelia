@@ -10,7 +10,9 @@ from tinydb import TinyDB, where
 from discord.ext import tasks, commands
 
 # Local dependencies
-from lib.utils import Cog, fmt_guild, bot_is_ready, not_ignored_channel, not_from_bot
+from lib.utils.etc import Cog
+from lib.utils.text import fmt_guild
+from lib.utils.checks import bot_is_ready, not_ignored_channel, not_from_bot
 # Services
 from lib.services.blacklist import Blacklist
 from lib.services.role import Role
