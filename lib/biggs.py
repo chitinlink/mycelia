@@ -127,6 +127,8 @@ class Biggs(commands.Bot):
   async def bot_check(self, ctx: commands.Context) -> bool:
     # Log all commands invoked
     log.info(f"Command invoked: {ctx.command.qualified_name}")
+
+    # "Message funnel"
     # Ensure all of these basic checks pass
     return (
       is_bot_ready(ctx) and
