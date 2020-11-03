@@ -32,7 +32,7 @@ logging.Logger.msg = msg
 # Intents
 # https://discordpy.readthedocs.io/en/stable/intents.html
 intents = discord.Intents.default()
-# Need members intent for lib.utils.is_guild_member
+# Need members intent for lib.utils.checks.is_guild_member
 intents.members = True
 
 class Core(Service):
