@@ -1,12 +1,9 @@
 import logging
-import json
 import subprocess
-from typing import Any
 
 # External dependencies
 import discord
-import jsonschema
-from tinydb import TinyDB, where
+from tinydb import TinyDB
 from discord.ext import tasks, commands
 
 # Local dependencies
@@ -14,6 +11,7 @@ from lib.utils.etc import Service
 from lib.utils.text import fmt_guild
 from lib.utils.checks import is_bot_ready, is_not_ignored_channel, is_not_from_bot
 # Services
+from lib.services.core import Core
 from lib.services.blacklist import Blacklist
 from lib.services.role import Role
 from lib.services.time import Time
@@ -22,29 +20,14 @@ from lib.services.schedule import Schedule
 from lib.services.reminder import Reminder
 from lib.services.fun import Fun
 
-# Logging
-log = logging.getLogger("Biggs")
-logging.addLevelName(15, "MESSAGE")
-def msg(self, message, *args, **kws):
-  self._log(15, message, args, **kws)
-logging.Logger.msg = msg
-
 # Intents
 # https://discordpy.readthedocs.io/en/stable/intents.html
 intents = discord.Intents.default()
 # Need members intent for lib.utils.checks.is_guild_member
 intents.members = True
 
-class Core(Service):
-  @commands.command(name="version", aliases=["v", "hello"])
-  async def version_command(self, ctx: commands.Context):
-    """ Display current bot version. """
-    _date = subprocess.check_output(
-      "git log -1 --date=relative --format=%ad".split(" ")
-    ).decode("utf-8").strip()
-    await ctx.send(
-      f"{ctx.bot._reactions['header']} Biggs (commit `{ctx.bot.version}`) — Last updated {_date}"
-    )
+# Logging
+log = logging.getLogger("Biggs")
 
 class Biggs(commands.Bot):
   def __init__(self, config: dict, *bot_args):
@@ -94,34 +77,6 @@ class Biggs(commands.Bot):
     log.info("Biggs is a member of these guilds:")
     for guild in self.guilds:
       log.info(f"• {fmt_guild(guild)}")
-
-  # Log guild movements
-  async def on_guild_join(self, guild: discord.Guild):
-    log.info(f"Biggs has joined the guild {fmt_guild(guild)}.")
-
-  async def on_guild_remove(self, guild: discord.Guild):
-    log.info(f"Biggs has been removed from the guild {fmt_guild(guild)}.")
-
-  async def on_guild_update(self, before: discord.Guild, after: discord.Guild):
-    if before.name != after.name:
-      log.info(f"The guild {before.name} has been renamed to {after.name}.")
-
-  # Log messages
-  async def on_message(self, message: discord.Message):
-    log.msg(f"{message.channel}§{message.author}: {message.content}")
-    await self.process_commands(message)
-
-  # Log errors
-  async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
-    name = error.__class__.__name__
-    if isinstance(error, (
-      commands.CheckFailure,
-      commands.DisabledCommand,
-      commands.CommandNotFound,
-      commands.CommandOnCooldown)):
-      log.warning(f"{name}: {error}")
-    else:
-      log.error(f"Command error ({name}): {error}")
 
   # Global check
   async def bot_check(self, ctx: commands.Context) -> bool:
