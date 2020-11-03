@@ -50,7 +50,7 @@ def readable_delta(delta: timedelta) -> str:
   else:      return out + " ago"
 
 class Cog(dCog):
-  """ <discord.ext.commands.Cog> superclass that adds log field  """
+  """ <discord.ext.commands.Cog> superclass that adds a log field.  """
   def __init__(self):
     self.log = logging.getLogger("Biggs")
     self.log.info(f"Loading service: {self.__class__.__name__}")

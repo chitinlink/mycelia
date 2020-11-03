@@ -21,12 +21,12 @@ def in_dms(ctx: Context) -> bool:
   return ctx.guild is None
 
 def is_mod(ctx: Context) -> bool:
-  """ Checks whether or not the author for the given context is a moderator based on their roles """
+  """ Checks whether or not the author for the given context is a moderator based on their roles. """
   return len(
     set(map(lambda r: r.id, ctx.author.roles)) &
     set(ctx.bot._config["mod_roles"])
   ) > 0
 
 async def is_guild_member(ctx: Context) -> bool:
-  """ Intended for use in DMs, checks if author is a member of the guild """
+  """ Intended for use in DMs, checks if author is a member of the guild. """
   return await ctx.bot._guild.fetch_member(ctx.author.id)

@@ -89,7 +89,7 @@ class Time(Cog):
 
   @commands.group(aliases=["t"], invoke_without_command=True)
   async def time(self, ctx: commands.Context, *, _input: typing.Optional[str] = "UTC"):
-    """ Show the current time, in UTC by default """
+    """ Show the current time, in UTC by default. """
 
     # Parse input
     # https://rubular.com/r/VzejTpqLv1g9rB

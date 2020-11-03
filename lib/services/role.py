@@ -19,12 +19,12 @@ class Role(Cog):
 
   @commands.group(aliases=["r"])
   async def role(self, ctx: commands.Context):
-    """ Manage your roles """
+    """ Manage your roles. """
     if ctx.invoked_subcommand is None: await ctx.send_help("role")
 
   @role.command(aliases=["a"])
   async def add(self, ctx: commands.Context, *, role: dRole):
-    """ Assign yourself a role """
+    """ Assign yourself a role. """
     if self._roles.search(where("id") == role.id):
       await ctx.author.add_roles(role)
       await react(ctx, "confirm")
@@ -34,7 +34,7 @@ class Role(Cog):
 
   @role.command(aliases=["r"])
   async def remove(self, ctx: commands.Context, *, role: dRole):
-    """ Remove a role you have """
+    """ Remove a role you have. """
     if self._roles.search(where("id") == role.id):
       if role in ctx.author.roles:
         await ctx.author.remove_roles(role)
@@ -49,7 +49,7 @@ class Role(Cog):
   @role.command(aliases=["reg"])
   @commands.check(is_mod)
   async def register(self, ctx: commands.Context, *, role: dRole):
-    """ (Mods) Register a role """
+    """ (Restricted to moderators) Register a role. """
     if self._roles.search(where("id") == role.id):
       await react(ctx, "confused")
       await ctx.send("Role already registered.", delete_after=10)
@@ -60,7 +60,7 @@ class Role(Cog):
   @role.command(aliases=["dereg"])
   @commands.check(is_mod)
   async def deregister(self, ctx: commands.Context, *, role: dRole):
-    """ (Mods) Deregister a role """
+    """ (Restricted to moderators) Deregister a role. """
     if self._roles.search(where("id") == role.id):
       self._roles.remove(where("id") == role.id)
       await react(ctx, "confirm")

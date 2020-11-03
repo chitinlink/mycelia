@@ -40,7 +40,6 @@ class Schedule(Cog):
 
   #Add to schedule
   def add_task(self, task: dict):
-    """ Insert """
     # Validate task
     jsonschema.validate(instance=task, schema=self._schedule_task_schema)
     # Submit validated JSON
@@ -51,12 +50,12 @@ class Schedule(Cog):
   # Schedule commands
   @commands.group(aliases=["sch"])
   async def schedule(self, ctx: commands.Context):
-    """ Restricted to moderators """
+    """ (Restricted to moderators) """
     if ctx.invoked_subcommand is None: await ctx.send_help("schedule")
 
   @schedule.command(aliases=["a"])
   async def add(self, ctx: commands.Context, *, data: str):
-    """ Adds a task to the schedule """
+    """ Add a task to the schedule. """
     try:
       # Parse and add task
       data = json.loads(data)
@@ -73,7 +72,7 @@ class Schedule(Cog):
 
   @schedule.command(aliases=["l"])
   async def list(self, ctx: commands.Context):
-    """ List existing tasks """
+    """ List existing tasks. """
     await ctx.send(md_list(self._schedule.all()))
 
   # Do stuff every second

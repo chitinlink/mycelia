@@ -25,12 +25,12 @@ class Blacklist(Cog):
   # Commands
   @commands.group(aliases=["bl"])
   async def blacklist(self, ctx: commands.Context):
-    """ Restricted to moderators """
+    """ (Restricted to moderators) """
     if ctx.invoked_subcommand is None: await ctx.send_help("blacklist")
 
   @blacklist.command(aliases=["a"])
   async def add(self, ctx: commands.Context, *, member_json: str):
-    """ Adds an entry to the blacklist """
+    """ Adds an entry to the blacklist. """
 
     try:
       # Parse JSON from string
@@ -51,7 +51,7 @@ class Blacklist(Cog):
 
   @blacklist.command(aliases=["v"])
   async def view(self, ctx: commands.Context, entry: str):
-    """ View entry in the blacklist """
+    """ View entry in the blacklist. """
 
     q = self._blacklist.get(where("name") == entry)
 
@@ -91,7 +91,7 @@ class Blacklist(Cog):
 
   @blacklist.command(aliases=["l"])
   async def list(self, ctx: commands.Context):
-    """ List everything in the blacklist """
+    """ List everything in the blacklist. """
 
     msg = "**Blacklist:**\n\n"
     for i in self._blacklist.all():

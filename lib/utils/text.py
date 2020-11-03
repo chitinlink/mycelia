@@ -2,35 +2,35 @@ from discord import Guild
 from typing import Union
 
 def md_quote(text: str) -> str:
-  """ Prefixes every line of given `text` with a ">" """
+  """ Prefixes every line of given `text` with a ">". """
   return "> " + text.replace("\n", "\n> ")
 
 def md_list(lst: iter) -> str:
-  """ Formats a list of strings into a consistent style """
+  """ Formats a list of strings into a consistent style. """
   return "".join([md_list_item(i) for i in lst])
 
 def md_list_item(text: str) -> str:
-  """ Formats a single line of a consistent-style list """
+  """ Formats a single line of a consistent-style list. """
   return f"• {text}\n"
 
 def md_codeblock(block: str, lang: str = "") -> str:
-  """ Markdown code block """
+  """ Markdown code block. """
   return f"```{lang}\n{block}```"
 
 def md_code(text: str) -> str:
-  """ Markdown inline code """
+  """ Markdown inline code. """
   return f"`{text}`"
 
 def md_spoiler(text: str) -> str:
   """
-    Markdown spoiler inline block
+    Markdown spoiler inline block.
 
     Note issue #30.
   """
   return f"||{text}||"
 
 def fmt_guild(guild: Guild) -> str:
-  """ Formats a Guild into a consistent style """
+  """ Formats a Guild into a consistent style. """
   return f"<{guild.id}> {guild.name} ({guild.member_count} member{plur(guild.member_count)})"
 
 def plur(t: Union[int, list, dict]) -> str:
