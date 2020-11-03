@@ -1,14 +1,14 @@
 from discord.ext.commands import Context
 
-def bot_is_ready(ctx: Context) -> bool:
+def is_bot_ready(ctx: Context) -> bool:
   """ True if the bot is ready. Included in the message funnel. """
   return ctx.bot.is_ready()
 
-def not_from_bot(ctx: Context) -> bool:
+def is_not_from_bot(ctx: Context) -> bool:
   """ Checks that the author for the given context is not a bot. Included in the message funnel. """
   return not ctx.author.bot
 
-def not_ignored_channel(ctx: Context) -> bool:
+def is_not_ignored_channel(ctx: Context) -> bool:
   """ Checks that the given context is not in an ignored channel. Included in the message funnel. """
   return ctx.channel not in ctx.bot._ignored_channels
 

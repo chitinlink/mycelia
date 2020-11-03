@@ -6,14 +6,14 @@ from discord.ext import commands, tasks
 from asyncio import create_task as await_this
 import schedule
 
-from lib.utils.etc import Cog, react, TIME_FORMAT
+from lib.utils.etc import Service, react, TIME_FORMAT
 from lib.utils.checks import is_mod, in_guild
-from lib.utils.text import md_list, md_code
+from lib.utils.text import fmt_list, fmt_code
 
 #TODO: add remove to sch
 #TODO: add purge handling
 
-class Schedule(Cog):
+class Schedule(Service):
   def __init__(self, bot: commands.Bot):
     super().__init__()
     self.bot = bot
@@ -62,7 +62,7 @@ class Schedule(Cog):
       self.add_task(data)
 
       await react(ctx, "confirm")
-      await ctx.send(f"Added task of type {md_code(data['type'])} to the schedule.", delete_after=10)
+      await ctx.send(f"Added task of type {fmt_code(data['type'])} to the schedule.", delete_after=10)
 
     except (jsonschema.exceptions.ValidationError, json.decoder.JSONDecodeError) as exc:
       await react(ctx, "deny")
@@ -73,7 +73,7 @@ class Schedule(Cog):
   @schedule.command(aliases=["l"])
   async def list(self, ctx: commands.Context):
     """ List existing tasks. """
-    await ctx.send(md_list(self._schedule.all()))
+    await ctx.send(fmt_list(self._schedule.all()))
 
   # Do stuff every second
   @tasks.loop(seconds=1)

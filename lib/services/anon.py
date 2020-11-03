@@ -1,9 +1,9 @@
 from discord.ext import commands
 
-from lib.utils.etc import Cog, react
+from lib.utils.etc import Service, react
 from lib.utils.checks import in_dms, is_guild_member
 
-class Anon(Cog):
+class Anon(Service):
   @commands.command()
   @commands.check(is_guild_member)
   async def anon(self, ctx: commands.Context, *, msg: str):

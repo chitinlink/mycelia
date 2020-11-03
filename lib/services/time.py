@@ -4,7 +4,7 @@ import re
 
 from discord.ext import commands
 
-from lib.utils.etc import Cog
+from lib.utils.etc import Service
 from lib.utils.checks import in_guild
 
 # Dict of UTC offsets -> associated timezone abbreviations
@@ -82,7 +82,7 @@ def timedelta_to_str(delta: datetime.timedelta) -> str:
   if mm: out += ":%02d" % mm
   return out
 
-class Time(Cog):
+class Time(Service):
   # Guild-only
   async def cog_check(self, ctx: commands.Context):
     return in_guild(ctx)

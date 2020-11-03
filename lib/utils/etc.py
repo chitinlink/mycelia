@@ -4,7 +4,7 @@ from discord import Emoji, PartialEmoji, Reaction, Guild
 from datetime import timedelta
 from typing import Union
 
-from lib.utils.text import plur
+from lib.utils.text import fmt_plur
 
 TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
@@ -33,23 +33,23 @@ def readable_delta(delta: timedelta) -> str:
   if delta_days:
     if delta_days > 364:
       delta_years = delta_days // 364
-      out = f"{delta_years} year{plur(delta_years)}"
+      out = f"{delta_years} year{fmt_plur(delta_years)}"
     elif delta_days > 30:
       delta_months = delta_days // 30
-      out = f"{delta_months} month{plur(delta_months)}"
+      out = f"{delta_months} month{fmt_plur(delta_months)}"
     else:
-      out = f"{delta_days} day{plur(delta_days)}"
+      out = f"{delta_days} day{fmt_plur(delta_days)}"
   elif delta_hours:
-    out = f"{delta_hours} hour{plur(delta_hours)}"
+    out = f"{delta_hours} hour{fmt_plur(delta_hours)}"
   elif delta_minutes:
-    out = f"{delta_minutes} minute{plur(delta_minutes)}"
+    out = f"{delta_minutes} minute{fmt_plur(delta_minutes)}"
   else:
-    out = f"{delta_seconds} second{plur(delta_seconds)}"
+    out = f"{delta_seconds} second{fmt_plur(delta_seconds)}"
 
   if future: return "in " + out
   else:      return out + " ago"
 
-class Cog(dCog):
+class Service(dCog):
   """ <discord.ext.commands.Cog> superclass that adds a log field.  """
   def __init__(self):
     self.log = logging.getLogger("Biggs")

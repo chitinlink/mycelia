@@ -7,9 +7,9 @@ from discord import AllowedMentions, Member
 from discord.ext import commands, tasks
 import delta
 
-from lib.utils.etc import Cog, react, readable_delta, TIME_FORMAT
+from lib.utils.etc import Service, react, readable_delta, TIME_FORMAT
 from lib.utils.checks import is_mod, in_guild
-from lib.utils.text import md_list_item, md_code
+from lib.utils.text import fmt_list_item, fmt_code
 
 def remsort(now: datetime):
   def _remsort(reminder):
@@ -23,7 +23,7 @@ def remshort(reminder: dict):
   elif len(_lines) > 1: return msg + " (…)"
   return msg
 
-class Reminder(Cog):
+class Reminder(Service):
   def __init__(self, bot: commands.Bot):
     super().__init__()
     self.bot = bot
@@ -98,9 +98,9 @@ class Reminder(Cog):
         then = datetime.datetime.strptime(reminder["datetime"], TIME_FORMAT)
         msg = remshort(reminder)
 
-        out += md_list_item(
-          f"{md_code(str(reminder.doc_id).rjust(3))} - " +
-          f"{md_code(reminder['datetime'])}, " +
+        out += fmt_list_item(
+          f"{fmt_code(str(reminder.doc_id).rjust(3))} - " +
+          f"{fmt_code(reminder['datetime'])}, " +
           f"{readable_delta(datetime.datetime.utcnow() - then)}:\n" +
           f"    {msg}"
         )
@@ -121,9 +121,9 @@ class Reminder(Cog):
       then = datetime.datetime.strptime(reminder["datetime"], TIME_FORMAT)
       msg = remshort(reminder)
 
-      out += md_list_item(
-        f"{md_code(str(reminder.doc_id).rjust(3))} - " +
-        f"{md_code(reminder['datetime'])}, " +
+      out += fmt_list_item(
+        f"{fmt_code(str(reminder.doc_id).rjust(3))} - " +
+        f"{fmt_code(reminder['datetime'])}, " +
         f"{readable_delta(datetime.datetime.utcnow() - then)} " +
         f"(<@{reminder['meta']['member']}>):\n"
         f"    {msg}"

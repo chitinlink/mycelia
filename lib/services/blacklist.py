@@ -7,11 +7,11 @@ from discord.ext import commands
 from tinydb import where
 import jsonschema
 
-from lib.utils.etc import Cog, react
-from lib.utils.checks import is_mod, in_guild, bot_is_ready, not_ignored_channel, not_from_bot, in_guild
-from lib.utils.text import md_quote
+from lib.utils.etc import Service, react
+from lib.utils.checks import is_mod, in_guild, is_bot_ready, is_not_ignored_channel, is_not_from_bot, in_guild
+from lib.utils.text import fmt_quote
 
-class Blacklist(Cog):
+class Blacklist(Service):
   def __init__(self, bot):
     super().__init__()
     self.bot = bot
@@ -78,7 +78,7 @@ class Blacklist(Cog):
 
       await ctx.send(
         f"**`{q['name']}`** aka {aliases}\n" +
-        md_quote(
+        fmt_quote(
           handles +
           f"**Short reason:** {short}\n" +
           "**Long reason:**||\n" +
@@ -102,10 +102,10 @@ class Blacklist(Cog):
 
   # Message scanner
   @commands.Cog.listener("on_message")
-  @commands.check(bot_is_ready)
+  @commands.check(is_bot_ready)
   @commands.check(in_guild)
-  @commands.check(not_ignored_channel)
-  @commands.check(not_from_bot)
+  @commands.check(is_not_ignored_channel)
+  @commands.check(is_not_from_bot)
   async def scan_message(self, message: Message):
     # Make sure it's not a blacklist command
     ctx = await self.bot.get_context(message)
@@ -165,7 +165,7 @@ class Blacklist(Cog):
         await self._notice_channel.send(
           f"**Blacklist match:** {names}\n" +
           f"by {message.author.mention} in {message.channel.mention}:\n" +
-          md_quote(message.content) + "\n" +
+          fmt_quote(message.content) + "\n" +
           f"{message.jump_url}\n" +
           f"Use `blacklist view {entry}` for details"
         )

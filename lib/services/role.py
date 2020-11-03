@@ -4,11 +4,11 @@ from discord import Role as dRole
 from discord.ext import commands
 from tinydb import where
 
-from lib.utils.etc import Cog, react
+from lib.utils.etc import Service, react
 from lib.utils.checks import is_mod, in_guild
-from lib.utils.text import md_list, md_code
+from lib.utils.text import fmt_list, fmt_code
 
-class Role(Cog):
+class Role(Service):
   def __init__(self, bot: commands.Bot):
     super().__init__()
     self._roles = bot._db.table("roles")
@@ -87,6 +87,6 @@ class Role(Cog):
     """ List all the self-assignable roles """
     await ctx.send(
       "**List of self-assignable roles:**\n" +
-      md_list(map(lambda r: md_code(ctx.bot._guild.get_role(r["id"]).name), self._roles)) + "\n" +
+      fmt_list(map(lambda r: fmt_code(ctx.bot._guild.get_role(r["id"]).name), self._roles)) + "\n" +
       "If you'd like a role added (especially pronouns), ask a moderator!"
     )

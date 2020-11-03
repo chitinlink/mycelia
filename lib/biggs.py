@@ -10,9 +10,9 @@ from tinydb import TinyDB, where
 from discord.ext import tasks, commands
 
 # Local dependencies
-from lib.utils.etc import Cog
+from lib.utils.etc import Service
 from lib.utils.text import fmt_guild
-from lib.utils.checks import bot_is_ready, not_ignored_channel, not_from_bot
+from lib.utils.checks import is_bot_ready, is_not_ignored_channel, is_not_from_bot
 # Services
 from lib.services.blacklist import Blacklist
 from lib.services.role import Role
@@ -35,7 +35,7 @@ intents = discord.Intents.default()
 # Need members intent for lib.utils.is_guild_member
 intents.members = True
 
-class Core(Cog):
+class Core(Service):
   @commands.command(name="version", aliases=["v", "hello"])
   async def version_command(self, ctx: commands.Context):
     """ Display current bot version. """
@@ -129,7 +129,7 @@ class Biggs(commands.Bot):
     log.info(f"Command invoked: {ctx.command.qualified_name}")
     # Ensure all of these basic checks pass
     return (
-      bot_is_ready(ctx) and
-      not_ignored_channel(ctx) and
-      not_from_bot(ctx)
+      is_bot_ready(ctx) and
+      is_not_ignored_channel(ctx) and
+      is_not_from_bot(ctx)
     )

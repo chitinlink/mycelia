@@ -4,13 +4,13 @@ from random import choice
 from discord import File, AllowedMentions
 from discord.ext import commands
 
-from lib.utils.etc import Cog
+from lib.utils.etc import Service
 from lib.utils.checks import in_guild
 
 from owoify import Owoifator
 owo = Owoifator()
 
-class Fun(Cog):
+class Fun(Service):
   # Guild-only
   async def cog_check(self, ctx: commands.Context):
     return in_guild(ctx)
