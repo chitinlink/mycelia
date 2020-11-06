@@ -52,5 +52,5 @@ def readable_delta(delta: timedelta) -> str:
 class Service(dCog):
   """ <discord.ext.commands.Cog> superclass that adds a log field.  """
   def __init__(self):
-    self.log = logging.getLogger("Biggs")
+    self.log = logging.getLogger(f"Biggs.{self.__class__.__name__}")
     self.log.info(f"Loading service: {self.__class__.__name__}")
