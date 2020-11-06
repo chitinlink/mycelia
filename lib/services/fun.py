@@ -70,10 +70,10 @@ class Fun(Service):
 
   async def combo(self, msg: Message):
     authors = [msg.author.id]
-    contents = [msg.content]
+    contents = [(msg.content, msg.embeds)]
     async for message in msg.channel.history(before=msg, limit=4):
       authors.append(message.author.id)
-      contents.append(message.content)
+      contents.append((message.content, message.embeds))
 
     # The previous 5 messages were the exact same, and all by different people.
     if (
@@ -83,4 +83,4 @@ class Fun(Service):
     ):
       self.log.info("Combo-ing.")
       # Join in
-      await msg.channel.send(msg.content)
+      await msg.channel.send(msg.content, embed=msg.embeds[0])
