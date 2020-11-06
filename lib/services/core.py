@@ -14,6 +14,16 @@ def msg(self, message, *args, **kws):
 logging.Logger.msg = msg
 
 class Core(Service):
+  def __init__(self, bot: commands.Bot):
+    super().__init__()
+    self.bot = bot
+
+    self.bot.add_listener(self.log_message, "on_message")
+    self.bot.add_listener(self.log_command_error, "on_command_error")
+    self.bot.add_listener(self.log_guild_join, "on_guild_join")
+    self.bot.add_listener(self.log_guild_remove, "on_guild_remove")
+    self.bot.add_listener(self.log_guild_update, "on_guild_update")
+
   @commands.command(name="version", aliases=["v", "hello"])
   async def version_command(self, ctx: commands.Context):
     """ Display current bot version. """
@@ -25,23 +35,22 @@ class Core(Service):
     )
 
   # Log guild movements
-  async def on_guild_join(self, guild: Guild):
+  async def log_guild_join(self, guild: Guild):
     log.info(f"Biggs has joined the guild {fmt_guild(guild)}.")
 
-  async def on_guild_remove(self, guild: Guild):
+  async def log_guild_remove(self, guild: Guild):
     log.info(f"Biggs has been removed from the guild {fmt_guild(guild)}.")
 
-  async def on_guild_update(self, before: Guild, after: Guild):
+  async def log_guild_update(self, before: Guild, after: Guild):
     if before.name != after.name:
       log.info(f"The guild {before.name} has been renamed to {after.name}.")
 
   # Log messages
-  async def on_message(self, message: Message):
+  async def log_message(self, message: Message):
     log.msg(f"{message.channel}§{message.author}: {message.content}")
-    await self.process_commands(message)
 
   # Log errors
-  async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
+  async def log_command_error(self, ctx: commands.Context, error: commands.CommandError):
     name = error.__class__.__name__
     if isinstance(error, (
       commands.CheckFailure,

@@ -1,16 +1,23 @@
 from os import listdir
 from random import choice
 
-from discord import File, AllowedMentions
+from discord import File, AllowedMentions, Message
+from discord import NotFound
 from discord.ext import commands
 
 from lib.utils.etc import Service
-from lib.utils.checks import in_guild
+from lib.utils.checks import in_guild, is_not_from_bot
 
 from owoify import Owoifator
 owo = Owoifator()
 
 class Fun(Service):
+  def __init__(self, bot: commands.Bot):
+    super().__init__()
+    self.bot = bot
+
+    self.bot.add_listener(self.combo, "on_message")
+
   # Guild-only
   async def cog_check(self, ctx: commands.Context):
     return in_guild(ctx)
@@ -21,7 +28,8 @@ class Fun(Service):
     async with ctx.typing():
       with open("./assets/yoda_pics/" + choice(listdir("./assets/yoda_pics/")), "rb") as f:
         await ctx.send(file=File(f))
-        await ctx.message.delete()
+        try: await ctx.message.delete()
+        except NotFound as exc: pass
 
   @commands.command()
   async def owo(self, ctx: commands.Context):
@@ -59,3 +67,20 @@ class Fun(Service):
 
       elif owomsg != msg.content:
         await ctx.send(owomsg, allowed_mentions=AllowedMentions.none())
+
+  async def combo(self, msg: Message):
+    authors = [msg.author.id]
+    contents = [msg.content]
+    async for message in msg.channel.history(before=msg, limit=4):
+      authors.append(message.author.id)
+      contents.append(message.content)
+
+    # The previous 5 messages were the exact same, and all by different people.
+    if (
+      list(set(authors)) == authors and
+      self.bot.user.id not in set(authors) and
+      len(set(contents)) == 1
+    ):
+      self.log.info("Combo-ing.")
+      # Join in
+      await msg.channel.send(msg.content)

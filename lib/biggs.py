@@ -59,14 +59,14 @@ class Biggs(commands.Bot):
       self._reactions = { key: parse_reactions(_id) for key, _id in self._config["reactions"].items() }
 
       # Services
-      self.add_cog(Core())
+      self.add_cog(Core(self))
       self.add_cog(Blacklist(self))
       self.add_cog(Role(self))
       self.add_cog(Time())
       self.add_cog(Anon())
       self.add_cog(Schedule(self))
       self.add_cog(Reminder(self))
-      self.add_cog(Fun())
+      self.add_cog(Fun(self))
 
       self._done_setup = True
       log.info("Initial setup done.")
