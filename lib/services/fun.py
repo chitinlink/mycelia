@@ -16,8 +16,6 @@ class Fun(Service):
     super().__init__()
     self.bot = bot
 
-    self.bot.add_listener(self.combo, "on_message")
-
   # Guild-only
   async def cog_check(self, ctx: commands.Context):
     return in_guild(ctx)
@@ -67,20 +65,3 @@ class Fun(Service):
 
       elif owomsg != msg.content:
         await ctx.send(owomsg, allowed_mentions=AllowedMentions.none())
-
-  async def combo(self, msg: Message):
-    authors = [msg.author.id]
-    contents = [(msg.content, msg.embeds)]
-    async for message in msg.channel.history(before=msg, limit=4):
-      authors.append(message.author.id)
-      contents.append((message.content, message.embeds))
-
-    # The previous 5 messages were the exact same, and all by different people.
-    if (
-      list(set(authors)) == authors and
-      self.bot.user.id not in set(authors) and
-      len(set(contents)) == 1
-    ):
-      self.log.info("Combo-ing.")
-      # Join in
-      await msg.channel.send(msg.content, embed=msg.embeds[0])
