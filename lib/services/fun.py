@@ -12,10 +12,6 @@ from owoify import Owoifator
 owo = Owoifator()
 
 class Fun(Service):
-  def __init__(self, bot: commands.Bot):
-    super().__init__()
-    self.bot = bot
-
   # Guild-only
   async def cog_check(self, ctx: commands.Context):
     return in_guild(ctx)

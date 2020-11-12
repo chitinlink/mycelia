@@ -15,8 +15,7 @@ logging.Logger.msg = msg
 
 class Core(Service):
   def __init__(self, bot: commands.Bot):
-    super().__init__()
-    self.bot = bot
+    super().__init__(bot)
 
     self.bot.add_listener(self.log_message, "on_message")
     self.bot.add_listener(self.log_command_error, "on_command_error")

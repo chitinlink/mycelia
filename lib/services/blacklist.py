@@ -13,8 +13,7 @@ from lib.utils.text import fmt_quote
 
 class Blacklist(Service):
   def __init__(self, bot):
-    super().__init__()
-    self.bot = bot
+    super().__init__(bot)
     self._blacklist = self.bot._db.table("blacklist")
     self._blacklist_member_schema = json.load(open("./lib/schema/blacklist_member.json"))
 

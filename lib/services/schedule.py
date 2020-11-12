@@ -15,8 +15,7 @@ from lib.utils.text import fmt_list, fmt_code
 
 class Schedule(Service):
   def __init__(self, bot: commands.Bot):
-    super().__init__()
-    self.bot = bot
+    super().__init__(bot)
     self._schedule = bot._db.table("schedule")
     self._schedule_task_schema = json.load(open("./lib/schema/schedule_task.json"))
 

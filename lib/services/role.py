@@ -10,7 +10,7 @@ from lib.utils.text import fmt_list, fmt_code
 
 class Role(Service):
   def __init__(self, bot: commands.Bot):
-    super().__init__()
+    super().__init__(bot)
     self._roles = bot._db.table("roles")
 
   # Guild-only

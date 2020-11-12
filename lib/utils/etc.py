@@ -49,8 +49,19 @@ def readable_delta(delta: timedelta) -> str:
   if future: return "in " + out
   else:      return out + " ago"
 
+def time_hms(secs: float) -> str:
+  """ Returns a consistent duration. """
+  hours = int(secs / 60 / 60)
+  minutes = int((secs - (hours * 60 * 60)) / 60)
+  seconds = int(secs - (hours * 60 * 60) - (minutes * 60))
+  _out = ""
+  if hours > 0:   _out += f"{hours}:"
+  if minutes > 0: _out += f"{str(minutes).zfill(2)}:"
+  return _out + str(seconds).zfill(2)
+
 class Service(dCog):
   """ <discord.ext.commands.Cog> superclass that adds a log field.  """
-  def __init__(self):
-    self.log = logging.getLogger(f"Biggs.{self.__class__.__name__}")
+  def __init__(self, bot):
+    self.bot = bot
+    self.log = logging.getLogger(f"{self.bot.__class__.__name__}.{self.__class__.__name__}")
     self.log.info(f"Loading service: {self.__class__.__name__}")

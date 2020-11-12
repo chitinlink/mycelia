@@ -25,8 +25,7 @@ def remshort(reminder: dict):
 
 class Reminder(Service):
   def __init__(self, bot: commands.Bot):
-    super().__init__()
-    self.bot = bot
+    super().__init__(bot)
     self._reminders = bot._db.table("reminders")
     self._reminder_schema = json.load(open("./lib/schema/reminder.json"))
 
