@@ -57,7 +57,7 @@ loginctl enable-linger $USER
 
 * Stop the bots and uninstall their systemd units: `./mycelia.py uninstall all`
 * Unit status: `systemctl --user status biggs.service`
-* Unit logs: `journalctl --user -u biggs.service`
+* Unit logs: `journalctl --user -u biggs.service -n 50` (Add `-f` for live logs)
 
 ## Developing
 
