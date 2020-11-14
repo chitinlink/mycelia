@@ -106,7 +106,9 @@ def _uninstall(bot: Bot):
     systemctl --user stop {bot.value}.service
     systemctl --user disable {bot.value}.service
     systemctl --user daemon-reload""")
-  os.remove(f"./unit/{bot.value}.service")
+
+  if pathlib.Path(f"./unit/{bot.value}.service").is_file:
+    os.remove(f"./unit/{bot.value}.service")
 
 def _update(bot: Bot):
   print(f"Updating {bot.value}")
