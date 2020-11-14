@@ -24,14 +24,16 @@ Smalls is a music bot used in Bodiam and elsewhere.
 ```sh
 # Install the requirements
 pip3 install -r requirements.txt
+# Make it an executable
+chmod +x ./mycelia.py
 # Go wild
-mycelia
+./mycelia.py
 ```
 
 ## Proper setup
 
 ```sh
-mycelia install all
+./mycelia.py install all
 ```
 
 This will install the required Python modules and register both bots as [systemd user units][systemd-user].  
@@ -44,14 +46,14 @@ loginctl enable-linger $USER
 ## Updates
 
 ```sh
-mycelia update all
+./mycelia.py update all
 ```
 
 **Note**: This will discard any changes to `settings.yml`.
 
 ## Useful commands
 
-* Stop the bots and uninstall their systemd units: `mycelia uninstall all`
+* Stop the bots and uninstall their systemd units: `./mycelia.py uninstall all`
 * Unit status: `systemctl --user status biggs.service`
 * Unit logs: `journalctl --user -u biggs.service`
 

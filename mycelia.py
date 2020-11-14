@@ -2,12 +2,12 @@
 
 """
 Usage:
-  mycelia run       (biggs | smalls)
-  mycelia install   (biggs | smalls | all)
-  mycelia update    (biggs | smalls | all)
-  mycelia uninstall (biggs | smalls | all)
-  mycelia (-h | --help)
-  mycelia (-v | --version)
+  mycelia.py run       (biggs | smalls)
+  mycelia.py install   (biggs | smalls | all)
+  mycelia.py update    (biggs | smalls | all)
+  mycelia.py uninstall (biggs | smalls | all)
+  mycelia.py (-h | --help)
+  mycelia.py (-v | --version)
 
 Options:
   -h --help     Show this message.
@@ -16,10 +16,6 @@ Options:
 
 # TODO figure out how to update lavalink easy
 # TODO install/update etc stuff
-# TODO sleuth this:
-# geting this error:
-# Unclosed client session
-# client_session: <aiohttp.client.ClientSession object at 0x00000183E9CF2550>
 
 import yaml
 import os
@@ -70,7 +66,7 @@ def _run(bot: Bot):
 def _install(bot: Bot):
   print("Installing python requirements...")
   subprocess.run(list("pip3 install -r requirements.txt"))
-  
+
   # Set systemd service WorkingDirectory to current dir
   print(f"Setting systemd working directory to {DIR}...")
   subprocess.run(list(f"sed -i \"s@^WorkingDirectory=.*@WorkingDirectory={DIR}@\" ./unit/{bot.value}.service"))
