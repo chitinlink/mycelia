@@ -20,6 +20,7 @@ def msg(self, message, *args, **kws):
   if self.isEnabledFor(logging.MESSAGE):
     self._log(logging.MESSAGE, message, args, **kws)
 logging.Logger.msg = msg
+logging.Logger.message = logging.Logger.msg
 
 # Formatters
 fmt_basic = logging.Formatter(

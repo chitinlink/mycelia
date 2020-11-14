@@ -15,10 +15,12 @@ Options:
 """
 
 # TODO figure out how to update lavalink easy
-# TODO install/update etc stuff
+# TODO ensure were on the right dir
 
 import os
 import pathlib
+from typing import List
+from re import sub
 import subprocess
 import yaml
 from shlex import split
@@ -40,6 +42,24 @@ class Bot(Enum):
   """ Enum for the available bots. """
   BIGGS = "biggs"
   SMALLS = "smalls"
+
+UNIT = \
+  "[Unit]\n" \
+  "Description={title} (Discord bot)\n" \
+  "\n" \
+  "[Service]\n" \
+  "Type=simple\n" \
+  "WorkingDirectory={dir}\n" \
+  "ExecStart=/bin/bash -c 'python3 ./mycelia.py run {name}'\n" \
+  "Restart=on-failure\n" \
+  "RestartSec=10\n" \
+  "Environment=PYTHONUNBUFFERED=1\n" \
+  "\n" \
+  "[Install]\n" \
+  "WantedBy=multi-user.target"
+
+def sh(cmds: str) -> List[subprocess.CompletedProcess]:
+  return [subprocess.run(split(line)) for line in cmds.strip().split("\n")]
 
 def _run(bot: Bot):
   # Load config
@@ -66,59 +86,40 @@ def _run(bot: Bot):
     log.info("Exiting")
 
 def _install(bot: Bot):
-  print("Installing python requirements...")
-  subprocess.run(split("pip3 install -r requirements.txt"))
+  print(f"Installing {bot.value}")
+  sh("""
+    chmod +x ./mycelia.py
+    pip3 install -r requirements.txt""")
 
-  # Set systemd service WorkingDirectory to current dir
-  print(f"Setting systemd working directory to {DIR}...")
-  subprocess.run(split(f"sed -i \"s@^WorkingDirectory=.*@WorkingDirectory={DIR}@\" ./unit/{bot.value}.service"))
+  with open(f"./unit/{bot.value}.service", "w") as f:
+    f.write(UNIT.format(title=bot.value.title(), name=bot.value, dir=DIR))
 
-  # Link systemd service
-  print("Linking systemd service...")
-  subprocess.run(split(f"systemctl --user link ./unit/{bot.value}.service"))
-
-  # Reload, enable & start
-  print("Reloading systemd...")
-  subprocess.run(split("systemctl --user daemon-reload"))
-  print("Enabling and starting service...")
-  subprocess.run(split(f"systemctl --user enable {bot.value}.service --now"))
-
-  print("Done installing!")
+  sh(f"""
+    systemctl --user link ./unit/{bot.value}.service
+    systemctl --user daemon-reload
+    systemctl --user enable {bot.value}.service --now""")
 
 def _uninstall(bot: Bot):
-  # Stop and disable
-  print("Stopping service...")
-  subprocess.run(split(f"systemctl --user stop {bot.value}.service"))
-  print("Disabling service...")
-  subprocess.run(split(f"systemctl --user disable {bot.value}.service"))
+  print(f"Uninstalling {bot.value}")
 
-  # Reload
-  print("Reloading systemd...")
-  subprocess.run(split("systemctl --user daemon-reload"))
-
-  print("Done uninstalling!")
+  sh(f"""
+    systemctl --user stop {bot.value}.service
+    systemctl --user disable {bot.value}.service
+    systemctl --user daemon-reload""")
+  os.remove(f"./unit/{bot.value}.service")
 
 def _update(bot: Bot):
-  # Uninstall
-  print("Running uninstall script...")
+  print(f"Updating {bot.value}")
+
   _uninstall(bot)
-
-  # Discard changes
-  print("Discarding changes...")
-  subprocess.run(split("git checkout -- ."))
-
-  # Pull latest
-  print("Pulling latest version...")
-  subprocess.run(split("git pull"))
-
-  # Install
-  print("Running install script...")
+  sh("""
+    git checkout -- .
+    git pull""")
   _install(bot)
-
-  print("Done updating!")
 
 if __name__ == "__main__":
   os.makedirs("./data", exist_ok=True)
+  os.makedirs("./unit", exist_ok=True)
 
   args = docopt(__doc__, version=VERSION)
 
