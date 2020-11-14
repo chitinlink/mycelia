@@ -27,7 +27,10 @@ class Proto(Bot):
 
   async def on_ready(self):
     if not self._done_setup:
-      await self._do_setup()
+      try: await self._do_setup()
+      except Exception as exc:
+        self.log.error(exc)
+        exit()
       self._done_setup = True
     # Done loading
     self.log.info("Initial setup done.")

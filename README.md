@@ -17,7 +17,9 @@ Smalls is a music bot used in Bodiam and elsewhere.
 
 ## Requirements
 
-[Python 3.8][python] and systemd.
+* Python 3.8
+* systemd (if you install)
+* Java 11 (for Smalls' Lavalink)
 
 ## Basic setup
 
@@ -64,7 +66,6 @@ Please use [Editorconfig].
 There is an included [VS Code `launch.json`][vscode-debugging] file for debugging.
 
 [discord.py]:       https://github.com/Rapptz/discord.py
-[python]:           https://www.python.org/
 [systemd-user]:     https://wiki.archlinux.org/index.php/Systemd/User
 [Editorconfig]:     https://editorconfig.org/
 [vscode-debugging]: https://code.visualstudio.com/Docs/editor/debugging
