@@ -2,10 +2,19 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python",
+      "name": "Biggs",
       "type": "python",
       "request": "launch",
-      "program": "main.py",
+      "program": "mycelia.py",
+      "args": ["--biggs"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Smalls",
+      "type": "python",
+      "request": "launch",
+      "program": "mycelia.py",
+      "args": ["--smalls"],
       "console": "integratedTerminal"
     }
   ]
