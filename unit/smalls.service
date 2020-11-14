@@ -4,7 +4,7 @@ Description=Smalls (Discord bot)
 [Service]
 Type=simple
 WorkingDirectory=/opt/mycelia/
-ExecStart=/bin/bash -c 'python3 ./mycelia run smalls'
+ExecStart=/bin/bash -c 'python3 ./mycelia.py run smalls'
 Restart=on-failure
 Environment=PYTHONUNBUFFERED=1
 
