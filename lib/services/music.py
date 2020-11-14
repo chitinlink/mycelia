@@ -67,10 +67,11 @@ class Music(Service):
     super().__init__(bot)
     self.controllers = {}
     self.bot._wavelink = wavelink.Client(bot=self.bot)
+    _path = self.bot._config["lavalink_path"]
+    _args = self.bot._config["lavalink_args"]
     self._lavalink = subprocess.Popen(
-      f"java -jar ./Lavalink.jar {self.bot._config['lavalink_args']}",
-      shell=False, cwd=self.bot._config["lavalink_path"],
-      stdout=subprocess.PIPE, universal_newlines=True)
+      f"java -jar {_path}/Lavalink.jar {_args}",
+      shell=False, stdout=subprocess.PIPE, universal_newlines=True)
     self._searchresults = {}
 
     self.bot.add_listener(self.check_searchresults, "on_message")
