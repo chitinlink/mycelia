@@ -21,6 +21,7 @@ import yaml
 import os
 import subprocess
 from enum import Enum
+from shlex import split
 
 from docopt import docopt
 
@@ -65,34 +66,34 @@ def _run(bot: Bot):
 
 def _install(bot: Bot):
   print("Installing python requirements...")
-  subprocess.run(list("pip3 install -r requirements.txt"))
+  subprocess.run(split("pip3 install -r requirements.txt"))
 
   # Set systemd service WorkingDirectory to current dir
   print(f"Setting systemd working directory to {DIR}...")
-  subprocess.run(list(f"sed -i \"s@^WorkingDirectory=.*@WorkingDirectory={DIR}@\" ./unit/{bot.value}.service"))
+  subprocess.run(split(f"sed -i \"s@^WorkingDirectory=.*@WorkingDirectory={DIR}@\" ./unit/{bot.value}.service"))
 
   # Link systemd service
   print("Linking systemd service...")
-  subprocess.run(list(f"systemctl --user link ./unit/{bot.value}.service"))
+  subprocess.run(split(f"systemctl --user link ./unit/{bot.value}.service"))
 
   # Reload, enable & start
   print("Reloading systemd...")
-  subprocess.run(list("systemctl --user daemon-reload"))
+  subprocess.run(split("systemctl --user daemon-reload"))
   print("Enabling and starting service...")
-  subprocess.run(list(f"systemctl --user enable {bot.value}.service --now"))
+  subprocess.run(split(f"systemctl --user enable {bot.value}.service --now"))
 
   print("Done installing!")
 
 def _uninstall(bot: Bot):
   # Stop and disable
   print("Stopping service...")
-  subprocess.run(list(f"systemctl --user stop {bot.value}.service"))
+  subprocess.run(split(f"systemctl --user stop {bot.value}.service"))
   print("Disabling service...")
-  subprocess.run(list(f"systemctl --user disable {bot.value}.service"))
+  subprocess.run(split(f"systemctl --user disable {bot.value}.service"))
 
   # Reload
   print("Reloading systemd...")
-  subprocess.run(list("systemctl --user daemon-reload"))
+  subprocess.run(split("systemctl --user daemon-reload"))
 
   print("Done uninstalling!")
 
@@ -103,11 +104,11 @@ def _update(bot: Bot):
 
   # Discard changes
   print("Discarding changes...")
-  # git checkout -- .
+  subprocess.run(split("git checkout -- ."))
 
   # Pull latest
   print("Pulling latest version...")
-  # git pull
+  subprocess.run(split("git pull"))
 
   # Install
   print("Running install script...")

@@ -6,6 +6,7 @@ from uuid import uuid4
 from itertools import islice
 from asyncio import Event, Queue
 from math import ceil
+from shlex import split
 
 # import datetime
 # import humanize
@@ -70,8 +71,9 @@ class Music(Service):
     _path = self.bot._config["lavalink_path"]
     _args = self.bot._config["lavalink_args"]
     self._lavalink = subprocess.Popen(
-      f"java -jar {_path}/Lavalink.jar {_args}",
-      shell=False, stdout=subprocess.PIPE, universal_newlines=True)
+      split(f"java -jar ./Lavalink.jar {_args}"),
+      shell=False, cwd=self.bot._config["lavalink_path"],
+      stdout=subprocess.PIPE, universal_newlines=True)
     self._searchresults = {}
 
     self.bot.add_listener(self.check_searchresults, "on_message")
