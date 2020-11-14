@@ -17,11 +17,12 @@ Options:
 # TODO figure out how to update lavalink easy
 # TODO install/update etc stuff
 
-import yaml
 import os
+import pathlib
 import subprocess
-from enum import Enum
+import yaml
 from shlex import split
+from enum import Enum
 
 from docopt import docopt
 
@@ -30,7 +31,7 @@ from lib.biggs import Biggs
 from lib.smalls import Smalls
 import logconfig
 
-DIR = os.path.dirname(__file__)
+DIR = pathlib.Path(__file__).parent.absolute()
 VERSION = subprocess.check_output(
   "git rev-parse --short HEAD".split(" ")
 ).decode("utf-8").strip()
