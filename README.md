@@ -23,6 +23,8 @@ Smalls is a music bot used in Bodiam and elsewhere.
 
 ## Basic setup
 
+Create a `settings.yml` and fill it in. (see [`settings.example.yml`](./settings.example.yml))
+
 ```sh
 # Install the requirements
 pip3 install -r requirements.txt
