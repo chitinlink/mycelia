@@ -18,5 +18,3 @@ class Smalls(Proto):
       is_bot_ready(ctx) and
       is_not_from_bot(ctx)
     )
-
-# TODO add reactions

@@ -23,7 +23,7 @@ class Core(Service):
       "git log -1 --date=relative --format=%ad".split(" ")
     ).decode("utf-8").strip()
     await ctx.send(
-      f"{ctx.bot._reactions['header']} {ctx.bot.__class__.__name__} (commit `{ctx.bot.version}`) — Last updated {_date}"
+      f"Mycelia (commit `{ctx.bot.version}`) — Last updated {_date}"
     )
 
   # Log guild movements
