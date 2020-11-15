@@ -7,11 +7,13 @@ from itertools import islice
 from asyncio import Event, Queue
 from math import ceil
 from shlex import split
+from collections import deque
 
 # import datetime
 # import humanize
 
 import discord
+from discord.utils import escape_markdown
 from discord.ext import commands
 
 from lib.utils.etc import Service, time_hms
@@ -19,9 +21,7 @@ from lib.utils.checks import in_dms
 from lib.utils.text import fmt_list, fmt_plur
 
 LAVALINK_READY = re.compile(" lavalink.server.Launcher\s+: Started Launcher")
-RURL = re.compile("https?:\/\/(?:www\.)?.+") #TODO double check this
-
-# TODO md escape track titles etc
+RURL = re.compile("https?:\/\/.+") # barebones but good enough
 
 def fmt_tracklist(tracks: List[wavelink.Track], page = 1) -> str:
   lst = []
@@ -32,7 +32,7 @@ def fmt_tracklist(tracks: List[wavelink.Track], page = 1) -> str:
       _out += f" - `[STREAM]`"
     else:
       _out += f" - `[{time_hms(track.length/1000)}]`"
-    _out += f" {track.title}"
+    _out += f" {escape_markdown(track.title)}"
     lst.append(_out)
   return fmt_list(lst)
 
@@ -60,7 +60,16 @@ class MusicController:
 
       track = await self.queue.get() # type: wavelink.player.Track
       await player.play(track)
-      await self.channel.send(f"Now playing: {track.title}")
+
+      _out = ""
+      _out += f":arrow_forward: "
+      if not track.is_stream:
+        _out += f"`[{time_hms(track.length / 1000)}]`"
+      else:
+        _out += f"`[STREAM]`"
+      _out += f" {escape_markdown(track.title)}"
+      await self.channel.send(_out)
+
       await self.next.wait()
 
 class Music(Service):
@@ -160,34 +169,30 @@ class Music(Service):
       if isinstance(tracks, wavelink.TrackPlaylist):
         for t in tracks.tracks: await self.queue_track(ctx, t, nomessage=True)
         await ctx.send(f"Added `{len(tracks.tracks)}` tracks to the queue.")
-        # FIXME says 100 tracks for some reason
       else:
         await self.queue_track(ctx, tracks[0])
     else:
       if not (tracks := (await self.bot._wavelink.get_tracks(f"ytsearch:{query}"))[:10]):
-        return await ctx.send("Couldn't find anything.", delete_after=10)
+        await ctx.send("Couldn't find anything.", delete_after=10)
       else:
         list_msg = await ctx.send(
           f"Results for \"{query}\":\n{fmt_tracklist(tracks)}"
         )
         self._searchresults[ctx.author.id] = {
           "tracks": tracks,
-          "datetime": ctx.message.created_at, # NOTE unused atm
           "list_msg": list_msg
         }
-        return
 
   async def queue_track(self, ctx, track: wavelink.player.Track, *, nomessage = False):
     controller = self.get_controller(ctx)
     controller.queue.put_nowait(track)
     if not nomessage:
-      await ctx.send(f"Added to the queue: {track.title}")
+      await ctx.send(f"Added to the queue: {escape_markdown(track.title)}")
 
   async def check_searchresults(self, message: discord.Message):
     mid = message.author.id
     if not mid in self._searchresults.keys(): return
-    match = re.match(fr"^{self.bot.command_prefix}?(10|[1-9])$", message.content)
-    if not match: return
+    if not (match := re.match(fr"^{re.escape(self.bot.command_prefix)}?(10|[1-9])$", message.content)): return
     track = self._searchresults[mid]["tracks"][int(match[1]) - 1]
     await self._searchresults[mid]["list_msg"].delete()
     del self._searchresults[mid]
@@ -204,15 +209,7 @@ class Music(Service):
     if not player.current and not controller.queue._queue:
       return await ctx.send("There's nothing in the queue...", delete_after=10)
 
-    qsize = controller.queue.qsize()
-    numpages = ceil(qsize / 10)
-
-    if pagenum > numpages:
-      return await ctx.send(f"There's only {numpages} page{fmt_plur(numpages)} of tracks in the queue.", delete_after=10)
-
-    tracks = list(islice(controller.queue._queue, (pagenum - 1) * 10, (pagenum - 1) * 10 + 10))
-
-    _c = player.current
+    if (_c := player.current) is None: print("fuck")
     _p = player.position
     time_remaining = time_hms(((_c.duration - _p) +
       sum(map(lambda t: t.duration,
@@ -221,54 +218,81 @@ class Music(Service):
     ) / 1000)
 
     _out = ""
-    _out += f"Currently playing: "
+    _out += f":arrow_forward: "
     if not _c.is_stream:
       _out += f"`[{time_hms(_p / 1000)}/{time_hms(_c.length / 1000)}]`"
     else:
       _out += f"`[STREAM]`"
-    _out += f" {_c.title}\n"
+    _out += f" {escape_markdown(_c.title)}\n<{_c.info['uri']}>\n"
+
     if controller.queue._queue:
+      qsize = controller.queue.qsize()
+      numpages = ceil(qsize / 10)
+
+      if pagenum > numpages:
+        return await ctx.send(f"There's only {numpages} page{fmt_plur(numpages)} of tracks in the queue.", delete_after=10)
+
+      tracks = list(islice(controller.queue._queue, (pagenum - 1) * 10, (pagenum - 1) * 10 + 10))
       if numpages > 1:
         _out += f"Page `{pagenum}/{numpages}` "
       _out += f"(`{qsize}` item{fmt_plur(qsize)}, `[{time_remaining}]` remaining)\n"
       _out += fmt_tracklist(tracks, page=pagenum)
+    else:
+      _out += "Nothing queued."
     await ctx.send(_out)
 
   @commands.command(aliases=["np", "what"])
-  async def nowplaying(self, ctx): #TODO
+  async def nowplaying(self, ctx):
     """ Get info for the current track. """
     player = self.bot._wavelink.get_player(ctx.guild.id)
 
     if not player.current:
       return await ctx.send("I'm not playing anything...", delete_after=10)
 
-    _c = player.current
+    _c = player.current # type: wavelink.Track
     _p = player.position
 
+    await ctx.send(_c.info["uri"])
     _out = ""
-    _out += f"Currently playing: "
     if not _c.is_stream:
       _out += f"`[{time_hms(_p / 1000)}/{time_hms(_c.length / 1000)}]`"
-
+    else:
+      _out += "`[STREAM]`"
+    _out += f" {escape_markdown(_c.title)}\n"
     await ctx.send(_out)
 
   @commands.command(aliases=["s", "next"])
-  async def skip(self, ctx, *, number: int = 1): # TODO a-b skip specific tracks
-    """ Skip the current track. """
-    if number < 1: return
-
+  async def skip(self, ctx, *, which: str = ""):
+    """ Skip track(s). """
     player = self.bot._wavelink.get_player(ctx.guild.id)
 
-    if not player.is_playing:
-      return await ctx.send("I'm not playing anything...", delete_after=10)
+    if which == "":
+      if not player.is_playing:
+        return await ctx.send("I'm not playing anything...", delete_after=10)
+      await ctx.send(f"Skipping {escape_markdown(player.current.title)}", delete_after=10)
+      return await player.stop()
+    elif match := re.match(r"^(\d+)(-(\d+))?$", which):
+      a = int(match[1])
+      if match[3]: b = int(match[3])
+      else: b = None
 
-    msg = "Skipping"
-    if number > 1: msg += f" {number} tracks"
-    await ctx.send(msg + ".", delete_after=10)
-    if number > 1:
+      if a == 0 or b == 0:
+        return await ctx.send("No 0s please...", delete_after=10)
+      if a > b:
+        return await ctx.send(f"Numbers that make sense, please...", delete_after=10)
+      if a == b:
+        b = None
+
       controller = self.get_controller(ctx)
-      for _ in range(number - 1): controller.queue.get_nowait()
-    await player.stop()
+      if b is not None:
+        controller.queue._queue = deque(
+          [i for _i, i in enumerate(controller.queue._queue) if _i + 1 not in range(a, b + 1)])
+        await ctx.send(f"Skipped tracks {a} through {b}.", delete_after=10)
+      else:
+        _t = escape_markdown(controller.queue._queue[a].title)
+        controller.queue._queue = deque(
+          [i for _i, i in enumerate(controller.queue._queue) if _i + 1 != a])
+        await ctx.send(f"Skipped track {a}: {_t}", delete_after=10)
 
   @commands.command(aliases=["unresume"])
   async def pause(self, ctx):
@@ -299,7 +323,7 @@ class Music(Service):
     vol = max(min(vol, 1000), 0)
     controller.volume = vol
 
-    await ctx.send(f"Volume is now `{vol}`.")
+    await ctx.send(f"Volume is now `{vol}%`.")
     await player.set_volume(vol)
 
   @commands.command(aliases=["disconnect", "dc", "stop", "kill", "die", "fuckoff"])

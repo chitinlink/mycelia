@@ -1,7 +1,6 @@
 import json
 
 import jsonschema
-from tinydb import where
 from discord.ext import commands, tasks
 from asyncio import create_task as await_this
 import schedule

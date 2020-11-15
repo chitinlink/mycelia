@@ -1,5 +1,4 @@
 import subprocess
-import logging
 
 from discord import Guild, Message
 from discord.ext import commands
@@ -50,6 +49,6 @@ class Core(Service):
       commands.DisabledCommand,
       commands.CommandNotFound,
       commands.CommandOnCooldown)):
-      self.log.warning(f"{name}: {error}")
+      self.log.warning(f"{name}: {error.with_traceback()}")
     else:
-      self.log.error(f"Command error ({name}): {error}")
+      self.log.error(f"Command error ({name}): {error.with_traceback(error.__traceback__)}")

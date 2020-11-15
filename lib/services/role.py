@@ -1,5 +1,3 @@
-import logging
-
 from discord import Role as dRole
 from discord.ext import commands
 from tinydb import where

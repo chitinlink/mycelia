@@ -1,7 +1,7 @@
 from os import listdir
 from random import choice
 
-from discord import File, AllowedMentions, Message
+from discord import File, AllowedMentions
 from discord import NotFound
 from discord.ext import commands
 

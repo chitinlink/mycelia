@@ -6,7 +6,7 @@
       "type": "python",
       "request": "launch",
       "program": "mycelia.py",
-      "args": ["--biggs"],
+      "args": ["run", "biggs"],
       "console": "integratedTerminal"
     },
     {
@@ -14,7 +14,7 @@
       "type": "python",
       "request": "launch",
       "program": "mycelia.py",
-      "args": ["--smalls"],
+      "args": ["run", "smalls"],
       "console": "integratedTerminal"
     }
   ]
