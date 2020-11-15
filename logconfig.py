@@ -55,22 +55,26 @@ hnd_file_smalls.setFormatter(fmt_basic)
 
 # Loggers
 l_discord = logging.getLogger("discord")
+l_wavelink = logging.getLogger("wavelink")
 l_biggs = logging.getLogger("Biggs")
 l_smalls = logging.getLogger("Smalls")
 
 l_discord.setLevel(logging.INFO)
+l_wavelink.setLevel(logging.INFO)
 l_biggs.setLevel(logging.DEBUG)
 l_smalls.setLevel(logging.DEBUG)
 
 l_biggs.addHandler(hnd_console)
 l_smalls.addHandler(hnd_console)
 l_discord.addHandler(hnd_console)
+l_wavelink.addHandler(hnd_console)
 
 l_biggs.addHandler(hnd_file_biggs)
 l_discord.addHandler(hnd_file_biggs)
 
 l_smalls.addHandler(hnd_file_smalls)
 l_discord.addHandler(hnd_file_smalls)
+l_wavelink.addHandler(hnd_file_smalls)
 
 if __name__ == "__main__":
   print("This file is not meant to be ran.")
