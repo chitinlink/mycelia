@@ -22,6 +22,7 @@ import pathlib
 from typing import List
 from re import sub
 import subprocess
+import aiohttp
 import yaml
 from shlex import split
 from enum import Enum
@@ -81,7 +82,10 @@ def _run(bot: Bot):
     if bot == Bot.BIGGS: Biggs(config["biggs"])
     elif bot == Bot.SMALLS: Smalls(config["smalls"])
 
-  except KeyboardInterrupt: pass
+  except KeyboardInterrupt:
+    log.info("Got KeyboardInterrupt")
+  except aiohttp.ClientError as exc:
+    log.critical(f"{exc.__class__.__name__}", exc_info=True)
   finally:
     log.info("Exiting")
 
