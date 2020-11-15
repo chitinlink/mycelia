@@ -53,8 +53,6 @@ loginctl enable-linger $USER
 ./mycelia.py update all
 ```
 
-**Note**: This will discard any changes to `settings.yml`.
-
 ## Useful commands
 
 * Stop the bots and uninstall their systemd units: `./mycelia.py uninstall all`
