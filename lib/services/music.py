@@ -4,7 +4,7 @@ import subprocess
 from typing import Union, List
 from uuid import uuid4
 from itertools import islice
-from asyncio import Event, Queue
+from asyncio import Event, Queue, sleep
 from math import ceil
 from shlex import split
 from collections import deque
@@ -85,7 +85,7 @@ class Music(Service):
       stdout=subprocess.PIPE, universal_newlines=True)
     self._searchresults = {}
 
-    self.bot.add_listener(self.check_searchresults, "on_message")
+    self.bot.add_listener(self.listen_searchresults, "on_message")
 
     rc = 0
     while True:
@@ -98,7 +98,7 @@ class Music(Service):
       rc = self._lavalink.poll()
 
   # Guilds only
-  async def cog_check(self, ctx):
+  async def cog_check(self, ctx: commands.Context):
     return not in_dms(ctx)
 
   # Close Lavalink when unloading
@@ -140,13 +140,14 @@ class Music(Service):
     return controller
 
   @commands.command(name="join", aliases=["connect"])
-  async def join_voice(self, ctx):
+  async def join_voice(self, ctx: commands.Context):
     """ Make me join your voice channel. """
     try:
       channel = ctx.author.voice.channel
     except AttributeError:
       await ctx.send("Please join a channel first...", delete_after=10)
       raise discord.DiscordException()
+      #FIXME probably use a diff exception here instead
 
     player = self.bot._wavelink.get_player(ctx.guild.id)
     await ctx.send(f"Joining __{channel.mention}__.", delete_after=10)
@@ -156,13 +157,13 @@ class Music(Service):
     controller.channel = ctx.channel
 
   @commands.command(aliases=["p"])
-  async def play(self, ctx, *, query: str):
+  async def play(self, ctx: commands.Context, *, query: str):
     """ Play something. """
 
     player = self.bot._wavelink.get_player(ctx.guild.id)
     if not player.is_connected:
       try: await ctx.invoke(self.join_voice)
-      except discord.DiscordException: return #FIXME probably use a diff exception here instead
+      except discord.DiscordException: return
 
     if RURL.match(query):
       tracks = await self.bot._wavelink.get_tracks(f"{query}")
@@ -171,6 +172,8 @@ class Music(Service):
         await ctx.send(f"Added `{len(tracks.tracks)}` tracks to the queue.")
       else:
         await self.queue_track(ctx, tracks[0])
+    elif re.match(r"(10|[1-9])", query):
+      await self.check_searchresults(ctx.message)
     else:
       if not (tracks := (await self.bot._wavelink.get_tracks(f"ytsearch:{query}"))[:10]):
         await ctx.send("Couldn't find anything.", delete_after=10)
@@ -178,28 +181,37 @@ class Music(Service):
         list_msg = await ctx.send(
           f"Results for \"{query}\":\n{fmt_tracklist(tracks)}"
         )
+
+        if ctx.author.id in self._searchresults.keys():
+          await self._searchresults[ctx.author.id]["list_msg"].delete()
+
         self._searchresults[ctx.author.id] = {
           "tracks": tracks,
           "list_msg": list_msg
         }
 
-  async def queue_track(self, ctx, track: wavelink.player.Track, *, nomessage = False):
+  async def queue_track(self, ctx: commands.Context, track: wavelink.player.Track, *, nomessage = False):
     controller = self.get_controller(ctx)
     controller.queue.put_nowait(track)
     if not nomessage:
       await ctx.send(f"Added to the queue: {escape_markdown(track.title)}")
 
+  async def listen_searchresults(self, message: discord.Message):
+    await self.check_searchresults(message)
+
   async def check_searchresults(self, message: discord.Message):
-    mid = message.author.id
-    if not mid in self._searchresults.keys(): return
-    if not (match := re.match(fr"^{re.escape(self.bot.command_prefix)}?(10|[1-9])$", message.content)): return
-    track = self._searchresults[mid]["tracks"][int(match[1]) - 1]
+    if not (mid := message.author.id) in self._searchresults.keys(): return
+    if self._searchresults[mid]["list_msg"].channel != message.channel: return
+    if not (match := re.match(
+      fr"^({re.escape(self.bot.command_prefix)}(p(lay)?\s+)?)?(10|[1-9])$",
+      message.content)): return
+    track = self._searchresults[mid]["tracks"][int(match[4]) - 1]
     await self._searchresults[mid]["list_msg"].delete()
     del self._searchresults[mid]
     await self.queue_track(await self.bot.get_context(message), track)
 
   @commands.command(aliases=["q", "list"])
-  async def queue(self, ctx, *, pagenum: int = 1):
+  async def queue(self, ctx: commands.Context, *, pagenum: int = 1):
     """ List queued tracks. """
     if pagenum < 1: return
 
@@ -242,7 +254,7 @@ class Music(Service):
     await ctx.send(_out)
 
   @commands.command(aliases=["np", "what"])
-  async def nowplaying(self, ctx):
+  async def nowplaying(self, ctx: commands.Context):
     """ Get info for the current track. """
     player = self.bot._wavelink.get_player(ctx.guild.id)
 
@@ -262,7 +274,7 @@ class Music(Service):
     await ctx.send(_out)
 
   @commands.command(aliases=["s", "next"])
-  async def skip(self, ctx, *, which: str = ""):
+  async def skip(self, ctx: commands.Context, *, which: str = ""):
     """ Skip track(s). """
     player = self.bot._wavelink.get_player(ctx.guild.id)
 
@@ -295,7 +307,7 @@ class Music(Service):
         await ctx.send(f"Skipped track {a}: {_t}", delete_after=10)
 
   @commands.command(aliases=["unresume"])
-  async def pause(self, ctx):
+  async def pause(self, ctx: commands.Context):
     """ Pause the player. """
     player = self.bot._wavelink.get_player(ctx.guild.id) # type: wavelink.Player
     if not player.is_playing or player.is_paused:
@@ -305,7 +317,7 @@ class Music(Service):
     await player.set_pause(True)
 
   @commands.command(aliases=["unpause", "continue"])
-  async def resume(self, ctx):
+  async def resume(self, ctx: commands.Context):
     """ Resume the player from a paused state. """
     player = self.bot._wavelink.get_player(ctx.guild.id)
     if not player.is_paused:
@@ -315,7 +327,7 @@ class Music(Service):
     await player.set_pause(False)
 
   @commands.command()
-  async def volume(self, ctx, *, vol: int):
+  async def volume(self, ctx: commands.Context, *, vol: int):
     """ Set the volume. """
     player = self.bot._wavelink.get_player(ctx.guild.id)
     controller = self.get_controller(ctx)
@@ -327,7 +339,7 @@ class Music(Service):
     await player.set_volume(vol)
 
   @commands.command(aliases=["disconnect", "dc", "stop", "kill", "die", "fuckoff"])
-  async def destroy(self, ctx):
+  async def destroy(self, ctx: commands.Context):
     """ Reset and disconnect. """
     player = self.bot._wavelink.get_player(ctx.guild.id)
 
@@ -338,7 +350,7 @@ class Music(Service):
     await ctx.send("Ok, bye!", delete_after=10)
 
   # @commands.command()
-  # async def info(self, ctx):
+  # async def info(self, ctx: commands.Context):
   #   """ Retrieve various Node/Server/Player information. """
   #   player = self.bot._wavelink.get_player(ctx.guild.id)
   #   node = player.node # type: wavelink.Node
