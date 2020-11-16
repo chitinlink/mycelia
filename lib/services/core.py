@@ -49,6 +49,6 @@ class Core(Service):
       commands.DisabledCommand,
       commands.CommandNotFound,
       commands.CommandOnCooldown)):
-      self.log.warning(f"{name}: {error.with_traceback()}")
+      self.log.warning(error)
     else:
-      self.log.error(f"Command error ({name}): {error.with_traceback(error.__traceback__)}")
+      self.log.error(f"{name}: {error}")
