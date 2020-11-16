@@ -338,7 +338,7 @@ class Music(Service):
     await ctx.send(f"Volume is now `{vol}%`.")
     await player.set_volume(vol)
 
-  @commands.command(aliases=["disconnect", "dc", "stop", "kill", "die", "fuckoff"])
+  @commands.command(aliases=["disconnect", "dc", "leave", "stop", "kill", "die", "fuckoff"])
   async def destroy(self, ctx: commands.Context):
     """ Reset and disconnect. """
     player = self.bot._wavelink.get_player(ctx.guild.id)
