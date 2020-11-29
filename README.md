@@ -23,7 +23,9 @@ Smalls is a music bot used in Bodiam and elsewhere.
 
 ## Basic setup
 
-Create a `settings.yml` and fill it in. (see [`settings.example.yml`](./settings.example.yml))
+Create a `settings.yml` file and fill it in. (see [`settings.example.yml`](./settings.example.yml))
+
+If you're going to run Smalls, create a `lavalink/application.yml` file and fill it in. (see [`lavalink/application.example.yml`](./lavalink/application.example.yml))
 
 ```sh
 # Install the requirements

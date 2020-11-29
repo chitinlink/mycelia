@@ -14,13 +14,18 @@ lavalink:
       http: true
       local: false
     bufferDurationMs: 400
-    youtubePlaylistLoadLimit: 10 # Number of pages at 100 each
-    playerUpdateInterval: 5 # How frequently to send player updates to clients, in seconds
+
+    # Number of pages at 100 each
+    youtubePlaylistLoadLimit: 10
+
+    # How frequently to send player updates to clients, in seconds
+    playerUpdateInterval: 5
+
     youtubeSearchEnabled: true
     soundcloudSearchEnabled: true
     gc-warnings: true
     #ratelimit:
-      #ipBlocks: ["1.0.0.0/8", "..."] # list of ip blocks
+      #ipBlocks: ["1.0.0.0/8", "..."]
       #excludedIps: ["...", "..."] # ips which should be explicit excluded from usage by lavalink
       #strategy: "RotateOnBan" # RotateOnBan | LoadBalance | NanoSwitch | RotatingNanoSwitch
       #searchTriggersFail: true # Whether a search 429 should trigger marking the ip as failing

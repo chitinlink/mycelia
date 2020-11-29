@@ -3,3 +3,4 @@ unit/
 logs/
 data/
 settings.yml
+lavalink/application.yml

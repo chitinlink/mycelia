@@ -1,6 +1,8 @@
 import wavelink
 import re
 import subprocess
+import yaml
+import os
 from typing import Union, List
 from uuid import uuid4
 from itertools import islice
@@ -81,8 +83,9 @@ class Music(Service):
     _args = self.bot._config["lavalink_args"]
     self._lavalink = subprocess.Popen(
       split(f"java -jar ./Lavalink.jar {_args}"),
-      shell=False, cwd=self.bot._config["lavalink_path"],
-      stdout=subprocess.PIPE, universal_newlines=True)
+      shell=False, cwd=_path,
+      stdout=subprocess.PIPE,
+      universal_newlines=True)
     self._searchresults = {}
 
     self.bot.add_listener(self.listen_searchresults, "on_message")
@@ -109,11 +112,17 @@ class Music(Service):
     await self.bot.wait_until_ready()
 
     _id = uuid4()
+
+    if not os.path.exists("./lavalink/application.yml"):
+      print("./lavalink/application.yml missing, exiting.")
+      exit()
+    with open("./lavalink/application.yml", "r") as y:
+      config = yaml.load(y, Loader=yaml.FullLoader) # type: dict
     node = await self.bot._wavelink.initiate_node(
-      host="127.0.0.1",
-      port=2333,
-      rest_uri="http://127.0.0.1:2333",
-      password="efbca800-5806-4fbf-868e-71403b9f61c4",
+      host=config["server"]["address"],
+      port=config["server"]["port"],
+      rest_uri=f"http://{config['server']['address']}:{config['server']['port']}",
+      password=config["lavalink"]["server"]["password"],
       identifier=str(_id),
       region="eu_west"
     )
