@@ -181,7 +181,7 @@ class Music(Service):
         await ctx.send(f"Added `{len(tracks.tracks)}` tracks to the queue.")
       else:
         await self.queue_track(ctx, tracks[0])
-    elif re.match(r"(10|[1-9])", query):
+    elif ctx.author.id in self._searchresults.keys() and re.match(r"^(10|[1-9])$", query):
       await self.check_searchresults(ctx.message)
     else:
       if not (tracks := (await self.bot._wavelink.get_tracks(f"ytsearch:{query}"))[:10]):
@@ -230,21 +230,33 @@ class Music(Service):
     if not player.current and not controller.queue._queue:
       return await ctx.send("There's nothing in the queue...", delete_after=10)
 
-    if (_c := player.current) is None: print("fuck")
-    _p = player.position
-    time_remaining = time_hms(((_c.duration - _p) +
-      sum(map(lambda t: t.duration,
-        filter(lambda t: not t.is_stream, controller.queue._queue))
-      )
-    ) / 1000)
+    if (_c := player.current) is not None:
+      _p = player.position
+      time_remaining = time_hms(((_c.duration - _p) +
+        sum(map(lambda t: t.duration,
+          filter(lambda t: not t.is_stream, controller.queue._queue))
+        )
+      ) / 1000)
+      _uri = _c.uri
+      _title = _c.title
+      _is_stream = _c.is_stream
+      _length = _c.length
+    else:
+      # Something's gone wrong
+      _p = 0
+      _is_stream = False
+      _title = "Something's gone horribly wrong!"
+      _length = 0
+      _uri = "https://html5zombo.com"
+      time_remaining = "??:??"
 
     _out = ""
     _out += f":arrow_forward: "
-    if not _c.is_stream:
-      _out += f"`[{time_hms(_p / 1000)}/{time_hms(_c.length / 1000)}]`"
+    if not _is_stream:
+      _out += f"`[{time_hms(_p / 1000)}/{time_hms(_length / 1000)}]`"
     else:
       _out += f"`[STREAM]`"
-    _out += f" {escape_markdown(_c.title)}\n<{_c.info['uri']}>\n"
+    _out += f" {escape_markdown(_title)}\n<{_uri}>\n"
 
     if controller.queue._queue:
       qsize = controller.queue.qsize()
@@ -294,21 +306,22 @@ class Music(Service):
       return await player.stop()
     elif match := re.match(r"^(\d+)(-(\d+))?$", which):
       a = int(match[1])
-      if match[3]: b = int(match[3])
-      else: b = None
-
-      if a == 0 or b == 0:
-        return await ctx.send("No 0s please...", delete_after=10)
-      if a > b:
-        return await ctx.send(f"Numbers that make sense, please...", delete_after=10)
-      if a == b:
+      if match[3]:
+        b = int(match[3])
+        if a == 0 or b == 0:
+          return await ctx.send("No 0s please...", delete_after=10)
+        if a > b:
+          return await ctx.send(f"Numbers that make sense, please...", delete_after=10)
+        if a == b:
+          b = None
+      else:
         b = None
 
       controller = self.get_controller(ctx)
       if b is not None:
         controller.queue._queue = deque(
-          [i for _i, i in enumerate(controller.queue._queue) if _i + 1 not in range(a, b + 1)])
-        await ctx.send(f"Skipped tracks {a} through {b}.", delete_after=10)
+          [i for _i, i in enumerate(controller.queue._queue) if _i + 1 not in range(a + 1, b + 1)])
+        await ctx.send(f"Skipped tracks {a}-{b}.", delete_after=10)
       else:
         _t = escape_markdown(controller.queue._queue[a].title)
         controller.queue._queue = deque(
