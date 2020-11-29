@@ -114,7 +114,7 @@ class Music(Service):
     _id = uuid4()
 
     if not os.path.exists("./lavalink/application.yml"):
-      print("./lavalink/application.yml missing, exiting.")
+      self.log.error("./lavalink/application.yml missing, exiting.")
       exit()
     with open("./lavalink/application.yml", "r") as y:
       config = yaml.load(y, Loader=yaml.FullLoader) # type: dict
