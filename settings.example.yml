@@ -34,3 +34,7 @@ biggs:
     confirm:  "\U00002705" # :white_check_mark:
     deny:     "\U0000274c" # :x:
     confused: "\U00002754" # :grey_question:
+
+  # For fun.py#key
+  # https://backpack.tf/developer/apikey/view
+  backpacktf_key: ~

@@ -1,5 +1,7 @@
 from os import listdir
 from random import choice
+import urllib.request, json
+from math import ceil
 
 from discord import File, AllowedMentions
 from discord import NotFound
@@ -7,6 +9,7 @@ from discord.ext import commands
 
 from lib.utils.etc import Service
 from lib.utils.checks import in_guild, is_not_from_bot
+from lib.utils.text import fmt_codeblock
 
 from owoify import Owoifator
 owo = Owoifator()
@@ -15,6 +18,22 @@ class Fun(Service):
   # Guild-only
   async def cog_check(self, ctx: commands.Context):
     return in_guild(ctx)
+
+  @commands.command()
+  async def key(self, ctx: commands.Context):
+    """ How much is a TF2 key worth right now? """
+
+    if ctx.bot._config['backpacktf_key'] is None:
+      await ctx.send("I dunno?", delete_after=10)
+
+    async with ctx.typing():
+      with urllib.request.urlopen(
+        f"https://backpack.tf/api/IGetCurrencies/v1?key={ctx.bot._config['backpacktf_key']}") as api:
+        v = json.loads( api.read().decode() )["response"]["currencies"]["keys"]["price"]["value"]
+      await ctx.send(fmt_codeblock(
+        f"Mann Co. Supply Crate Key\n" \
+        f"{v} ref = {ceil(v * 3 * 3)} scrap = {ceil(v * 3 * 3) * 2} weapon drops"
+      ))
 
   @commands.command()
   async def yoda(self, ctx: commands.Context):
