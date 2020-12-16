@@ -1,6 +1,7 @@
 from os import listdir
 from random import choice
-import urllib.request, json
+from urllib.request import urlopen, Request
+import json
 from math import ceil
 
 from discord import File, AllowedMentions
@@ -27,8 +28,9 @@ class Fun(Service):
       await ctx.send("I dunno?", delete_after=10)
 
     async with ctx.typing():
-      with urllib.request.urlopen(
-        f"https://backpack.tf/api/IGetCurrencies/v1?key={ctx.bot._config['backpacktf_key']}") as api:
+      with urlopen(Request(
+        f"https://backpack.tf/api/IGetCurrencies/v1?key={ctx.bot._config['backpacktf_key']}",
+        headers={ "User-Agent": "Mozilla/5.0 (X11; U; Linux i686) Gecko/20071127 Firefox/2.0.0.11" })) as api:
         v = json.loads( api.read().decode() )["response"]["currencies"]["keys"]["price"]["value"]
       await ctx.send(fmt_codeblock(
         f"Mann Co. Supply Crate Key\n" \
