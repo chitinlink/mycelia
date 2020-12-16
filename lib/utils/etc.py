@@ -56,7 +56,7 @@ def time_hms(secs: float) -> str:
   seconds = int(secs - (hours * 60 * 60) - (minutes * 60))
   _out = ""
   if hours > 0:   _out += f"{hours}:"
-  if minutes > 0: _out += f"{str(minutes).zfill(2)}:"
+  if minutes > 0 or hours > 0: _out += f"{str(minutes).zfill(2)}:"
   return _out + str(seconds).zfill(2)
 
 class Service(dCog):
