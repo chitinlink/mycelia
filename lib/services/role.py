@@ -1,4 +1,4 @@
-from discord import Role as dRole
+from discord import Role as dRole, AllowedMentions
 from discord.ext import commands
 from tinydb import where
 
@@ -85,6 +85,7 @@ class Role(Service):
     """ List all the self-assignable roles """
     await ctx.send(
       "**List of self-assignable roles:**\n" +
-      fmt_list(map(lambda r: fmt_code(ctx.bot._guild.get_role(r["id"]).name), self._roles)) + "\n" +
-      "If you'd like a role added (especially pronouns), ask a moderator!"
+      fmt_list(map(lambda r: ctx.bot._guild.get_role(r["id"]).mention, self._roles)) + "\n" +
+      "If you'd like a role added (especially pronouns), ask a moderator!",
+      allowed_mentions=AllowedMentions.none()
     )
