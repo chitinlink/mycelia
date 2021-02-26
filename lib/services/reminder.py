@@ -42,7 +42,11 @@ class Reminder(Service):
     match = re.match("\A([^:\n]+):(.+)\Z", reminder, re.S)
     if match:
       try:
-        when = datetime.datetime.utcnow() + delta.parse(match[1])
+        duration = delta.parse(match[1])
+        if duration > datetime.timedelta(days = 365.25 * 5):
+          await react(ctx, "deny")
+          return await ctx.send("That's way too long.", delete_after=10)
+        when = datetime.datetime.utcnow() + duration
       except Exception as exc:
         await react(ctx, "deny")
         await ctx.send(f"Error: {exc}", delete_after=10)
