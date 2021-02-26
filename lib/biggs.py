@@ -8,7 +8,6 @@ from lib.proto import Proto
 from lib.utils.checks import is_bot_ready, is_not_ignored_channel, is_not_from_bot
 # Services
 from lib.services.core import Core
-from lib.services.blacklist import Blacklist
 from lib.services.role import Role
 from lib.services.time import Time
 from lib.services.anon import Anon
@@ -41,7 +40,6 @@ class Biggs(Proto):
 
     # Services
     self.add_cog(Core(self))
-    self.add_cog(Blacklist(self))
     self.add_cog(Role(self))
     self.add_cog(Time(self))
     self.add_cog(Anon(self))
