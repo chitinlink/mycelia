@@ -15,4 +15,4 @@ class Anon(Service):
       await react(ctx, "confirm")
     else:
       await react(ctx, "confused")
-      await ctx.send("This command is available only in DMs.", delete_after=10)
+      await ctx.reply("This command is available only in DMs.", delete_after=10, mention_author=False)

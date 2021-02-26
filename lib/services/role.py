@@ -28,7 +28,7 @@ class Role(Service):
       await react(ctx, "confirm")
     else:
       await react(ctx, "confused")
-      await ctx.send("Role not available.", delete_after=10)
+      await ctx.message.reply("Role not available.", delete_after=10, mention_author=False)
 
   @role.command(aliases=["r"])
   async def remove(self, ctx: commands.Context, *, role: dRole):
@@ -39,10 +39,10 @@ class Role(Service):
         await react(ctx, "confirm")
       else:
         await react(ctx, "confused")
-        await ctx.send("You can't remove that role, because you don't have it.", delete_after=10)
+        await ctx.reply("You can't remove that role, because you don't have it.", delete_after=10, mention_author=False)
     else:
       await react(ctx, "confused")
-      await ctx.send("Role not available.", delete_after=10)
+      await ctx.reply("Role not available.", delete_after=10, mention_author=False)
 
   @role.command(aliases=["reg"])
   @commands.check(is_mod)
@@ -50,7 +50,7 @@ class Role(Service):
     """ (Restricted to moderators) Register a role. """
     if self._roles.search(where("id") == role.id):
       await react(ctx, "confused")
-      await ctx.send("Role already registered.", delete_after=10)
+      await ctx.reply("Role already registered.", delete_after=10, mention_author=False)
     else:
       self._roles.insert({ "id": role.id })
       await react(ctx, "confirm")
@@ -64,21 +64,21 @@ class Role(Service):
       await react(ctx, "confirm")
     else:
       await react(ctx, "confused")
-      await ctx.send("Role not registered.", delete_after=10)
+      await ctx.reply("Role not registered.", delete_after=10, mention_author=False)
 
   @add.error
   @remove.error
   async def addremove_error(self, ctx: commands.Context, error: commands.CommandError):
     if isinstance(error, commands.BadArgument):
       await react(ctx, "confused")
-      await ctx.send(error, delete_after=10)
+      await ctx.reply(error, delete_after=10, mention_author=False)
 
   @register.error
   @deregister.error
   async def regdereg_error(self, ctx: commands.Context, error: commands.CommandError):
     if isinstance(error, (commands.MissingRequiredArgument, commands.BadArgument)):
       await react(ctx, "confused")
-      await ctx.send(error, delete_after=10)
+      await ctx.reply(error, delete_after=10, mention_author=False)
 
   @role.command(aliases=["l"])
   async def list(self, ctx: commands.Context):

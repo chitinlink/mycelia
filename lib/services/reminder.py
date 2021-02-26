@@ -45,11 +45,11 @@ class Reminder(Service):
         duration = delta.parse(match[1])
         if duration > datetime.timedelta(days = 365.25 * 5):
           await react(ctx, "deny")
-          return await ctx.send("That's way too long.", delete_after=10)
+          return await ctx.reply("That's way too long.", delete_after=10, mention_author=False)
         when = datetime.datetime.utcnow() + duration
       except Exception as exc:
         await react(ctx, "deny")
-        await ctx.send(f"Error: {exc}", delete_after=10)
+        await ctx.reply(f"Error: {exc}", delete_after=10, mention_author=False)
         return
 
       msg = match[2].strip()
@@ -77,10 +77,10 @@ class Reminder(Service):
         await react(ctx, "deny")
         if exc.__class__ == json.decoder.JSONDecodeError: msg = exc
         else:                                             msg = exc.message
-        await ctx.send(f"JSON Error: {msg}")
+        await ctx.reply(f"JSON Error: {msg}", mention_author=False)
     else:
       await react(ctx, "deny")
-      await ctx.send("Unsupported syntax. Use `,rem <duration>:<message>`", delete_after=10)
+      await ctx.reply("Unsupported syntax. Use `,rem <duration>:<message>`", delete_after=10, mention_author=False)
 
   @reminder.command(aliases=["l"])
   async def list(self, ctx: commands.Context):
@@ -95,7 +95,7 @@ class Reminder(Service):
     )
 
     if len(your_reminders) == 0:
-      await ctx.send("You don't have any reminders set.")
+      await ctx.reply("You don't have any reminders set.", mention_author=False)
     else:
       for reminder in your_reminders:
         then = datetime.datetime.strptime(reminder["datetime"], TIME_FORMAT)
@@ -108,7 +108,7 @@ class Reminder(Service):
           f"    {msg}"
         )
 
-      await ctx.send(out, allowed_mentions=AllowedMentions.none())
+      await ctx.reply(out, allowed_mentions=AllowedMentions.none(), mention_author=False)
 
   @reminder.command(aliases=["la"])
   @commands.check(is_mod)
@@ -116,7 +116,7 @@ class Reminder(Service):
     """ (Restricted to moderators) List all reminders. """
 
     if len(self._reminders.all()) == 0:
-      await ctx.send("There are no reminders.", delete_after=10)
+      await ctx.reply("There are no reminders.", delete_after=10, mention_author=False)
       return
 
     out = ""
@@ -132,7 +132,7 @@ class Reminder(Service):
         f"    {msg}"
       )
 
-    await ctx.send(out, allowed_mentions=AllowedMentions.none())
+    await ctx.reply(out, allowed_mentions=AllowedMentions.none(), mention_author=False)
 
   @reminder.command()
   @commands.check(is_mod)
@@ -147,7 +147,7 @@ class Reminder(Service):
     ))
     self._reminders.remove(doc_ids=rems)
     await react(ctx, "confirm")
-    await ctx.send(f"Purged {len(rems)} reminders.", delete_after=10)
+    await ctx.reply(f"Purged {len(rems)} reminders.", delete_after=10, mention_author=False)
 
   @reminder.command()
   @commands.check(is_mod)
@@ -159,7 +159,7 @@ class Reminder(Service):
       await react(ctx, "confirm")
     else:
       await react(ctx, "deny")
-      await ctx.send("That's not a reminder.", delete_after=10)
+      await ctx.reply("That's not a reminder.", delete_after=10, mention_author=False)
 
   @reminder.command(aliases=["r"])
   async def remove(self, ctx: commands.Context, reminder_id: int):
@@ -171,10 +171,10 @@ class Reminder(Service):
         await react(ctx, "confirm")
       else:
         await react(ctx, "deny")
-        await ctx.send("That's not your reminder.", delete_after=10)
+        await ctx.reply("That's not your reminder.", delete_after=10, mention_author=False)
     else:
       await react(ctx, "deny")
-      await ctx.send("That's not a reminder.", delete_after=10)
+      await ctx.reply("That's not a reminder.", delete_after=10, mention_author=False)
 
   async def announce_reminder(self, reminder: dict):
     await self.bot._guild.get_channel(reminder["channel"]).send(

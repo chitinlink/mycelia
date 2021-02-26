@@ -101,7 +101,7 @@ class Time(Service):
       try:
         utc_offset = tztable[tz]
       except KeyError as exc:
-        await ctx.send(f"Timezone {exc} not found.")
+        await ctx.reply(f"Timezone {exc} not found.", mention_author=False)
         return
 
       if match[2]:
@@ -112,7 +112,7 @@ class Time(Service):
         try:
           t = datetime.datetime.strptime(f"{match[5].rjust(2, '0')}:{mins}", "%H:%M")
         except ValueError as exc:
-          await ctx.send(exc)
+          await ctx.reply(exc, mention_author=False)
           return
 
         delta = prefix * datetime.timedelta(hours=t.hour, minutes=t.minute)
@@ -126,7 +126,7 @@ class Time(Service):
       time = datetime.datetime.utcnow() + utc_offset + delta
       await ctx.send(time.strftime(f"%I:%M%p {tz}{timedelta_to_str(delta)}{_utc_offset}"))
     else:
-      await ctx.send(f"That's definitely not a timezone. Try something like \"EST+5\".")
+      await ctx.reply(f"That's definitely not a timezone. Try something like \"EST+5\".", mention_author=False)
 
   # @time.command(aliases=["conv"])
   # async def convert(self, ctx, *, ):

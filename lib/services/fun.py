@@ -25,7 +25,7 @@ class Fun(Service):
     """ How much is a TF2 key worth right now? """
 
     if ctx.bot._config['backpacktf_key'] is None:
-      await ctx.send("I dunno?", delete_after=10)
+      await ctx.reply("I dunno?", delete_after=10, mention_author=False)
 
     async with ctx.typing():
       with urlopen(Request(

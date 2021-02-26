@@ -24,7 +24,7 @@ class Schedule(Service):
 
     self.tick.start()
 
-  # Guild-only
+  # Guild-only, mod only
   async def cog_check(self, ctx: commands.Context):
     return in_guild(ctx) and is_mod(ctx)
 
@@ -34,6 +34,7 @@ class Schedule(Service):
       await_this(channel.send(message))
 
     if task["type"] == "message":
+      # /^schedule\\.every\\(\\d*\\)\\.[^;\\s\\b]+\\.do$/
       eval(task["directive"])(task_message, self.bot._guild.get_channel(task["channel"]), task["message"])
 
   #Add to schedule
@@ -60,7 +61,7 @@ class Schedule(Service):
       self.add_task(data)
 
       await react(ctx, "confirm")
-      await ctx.send(f"Added task of type {fmt_code(data['type'])} to the schedule.", delete_after=10)
+      await ctx.reply(f"Added task of type {fmt_code(data['type'])} to the schedule.", delete_after=10, mention_author=False)
 
     except (jsonschema.exceptions.ValidationError, json.decoder.JSONDecodeError) as exc:
       await react(ctx, "deny")
