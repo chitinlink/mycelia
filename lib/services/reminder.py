@@ -45,7 +45,7 @@ class Reminder(Service):
   # Reminders
   @commands.group(aliases=["rem"], invoke_without_command=True)
   async def reminder(self, ctx: commands.Context, *, reminder: str):
-    """ Set a reminder, ie ",rem 2 hours: Wake up!" """
+    """ Set a reminder, ie ",rem in 2 hours: Wake up!" """
     match = re.match("\A([^:\n]+):(.+)\Z", reminder, re.S)
     if match:
       try:
