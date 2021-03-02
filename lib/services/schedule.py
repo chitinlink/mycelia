@@ -67,7 +67,13 @@ class Schedule(Service):
       await react(ctx, "deny")
       if exc.__class__ == json.decoder.JSONDecodeError: msg = exc
       else:                                             msg = exc.message
-      await ctx.send(f"JSON Error: {msg}")
+      await ctx.reply(f"JSON Error: {msg}", mention_author=False)
+
+  # @schedule.command(aliases=["r"])
+  # async def remove(self, ctx: commands.Context, id: int):
+  #   """ Remove a task from the schedule. """
+  #   # TODO
+  #   await ctx.reply("Finish this Ada.")
 
   @schedule.command(aliases=["l"])
   async def list(self, ctx: commands.Context):
