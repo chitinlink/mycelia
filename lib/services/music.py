@@ -119,12 +119,12 @@ class Music(Service):
     with open("./lavalink/application.yml", "r") as y:
       config = yaml.load(y, Loader=yaml.FullLoader) # type: dict
     node = await self.bot._wavelink.initiate_node(
-      host=config["server"]["address"],
-      port=config["server"]["port"],
-      rest_uri=f"http://{config['server']['address']}:{config['server']['port']}",
-      password=config["lavalink"]["server"]["password"],
-      identifier=str(_id),
-      region="eu_west"
+      identifier = str(_id),
+      region     = "eu_west",
+      host       = config["server"]["address"],
+      port       = config["server"]["port"],
+      rest_uri   = f"http://{config['server']['address']}:{config['server']['port']}",
+      password   = config["lavalink"]["server"]["password"]
     )
     self.log.info(f"Initiated Wavelink node with identifier {_id}.")
 
