@@ -43,7 +43,7 @@ class Reminder(Service):
     return in_guild(ctx)
 
   # Reminders
-  @commands.group(aliases=["grem"], invoke_without_command=True)
+  @commands.group(aliases=["rem"], invoke_without_command=True)
   async def reminder(self, ctx: commands.Context, *, reminder: str):
     """ Set a reminder, ie ",rem in 2 hours: Wake up!" """
     match = re.match("\A([^:\n]+):\s?(.+)\Z", reminder, re.S)
