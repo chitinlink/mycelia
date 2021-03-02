@@ -5,11 +5,18 @@ import re
 import jsonschema
 from discord import AllowedMentions, Member
 from discord.ext import commands, tasks
-import delta
+import dateparser
 
 from lib.utils.etc import Service, react, readable_delta, TIME_FORMAT
 from lib.utils.checks import is_mod, in_guild
 from lib.utils.text import fmt_list_item, fmt_code
+
+dateparser_settings = {
+  "TIMEZONE": "Etc/UTC",
+  "DATE_ORDER": "YMD",
+  "PREFER_DATES_FROM": "future",
+  "PREFER_DAY_OF_MONTH": "current",
+}
 
 def remsort(now: datetime):
   def _remsort(reminder):
@@ -42,11 +49,14 @@ class Reminder(Service):
     match = re.match("\A([^:\n]+):(.+)\Z", reminder, re.S)
     if match:
       try:
-        duration = delta.parse(match[1])
+        when = dateparser.parse(match[1])
+        duration = when - datetime.datetime.now()
+        if duration <= datetime.timedelta(0):
+          await react(ctx, "deny")
+          return await ctx.reply("I can't go back in time.", delete_after=10, mention_author=False)
         if duration > datetime.timedelta(days = 365.25 * 5):
           await react(ctx, "deny")
           return await ctx.reply("That's way too long.", delete_after=10, mention_author=False)
-        when = datetime.datetime.utcnow() + duration
       except Exception as exc:
         await react(ctx, "deny")
         await ctx.reply(f"Error: {exc}", delete_after=10, mention_author=False)
