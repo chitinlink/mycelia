@@ -44,7 +44,7 @@ class Biggs(Proto):
     self.add_cog(Time(self))
     self.add_cog(Anon(self))
     self.add_cog(Schedule(self))
-    self.add_cog(Reminder(self))
+    # self.add_cog(Reminder(self))
     self.add_cog(Fun(self))
 
   def funnel(self, ctx: Context) -> bool:
