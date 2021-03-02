@@ -67,6 +67,8 @@ Please use [Editorconfig].
 
 There is an included [VS Code `launch.json`][vscode-debugging] file for debugging.
 
+Make sure you're browsing the documentation for the proper version of the libraries used in the bot. Check [requirements.txt](./requirements.txt) to be sure.
+
 [discord.py]:       https://github.com/Rapptz/discord.py
 [systemd-user]:     https://wiki.archlinux.org/index.php/Systemd/User
 [Editorconfig]:     https://editorconfig.org/
