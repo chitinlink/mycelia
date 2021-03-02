@@ -23,7 +23,8 @@ class Core(Service):
       "git log -1 --date=relative --format=%ad".split(" ")
     ).decode("utf-8").strip()
     await ctx.send(
-      f"Mycelia (commit `{ctx.bot.version}`) — Last updated {_date}"
+      f"Mycelia (commit `{ctx.bot.version}`) — Last updated {_date}" \
+      f":minidisc: <https://github.com/technoabyss/mycelia>"
     )
 
   # Log guild movements
