@@ -43,20 +43,31 @@ class Reminder(Service):
     return in_guild(ctx)
 
   # Reminders
-  @commands.group(aliases=["rem"], invoke_without_command=True)
+  @commands.group(aliases=["grem"], invoke_without_command=True)
   async def reminder(self, ctx: commands.Context, *, reminder: str):
     """ Set a reminder, ie ",rem in 2 hours: Wake up!" """
-    match = re.match("\A([^:\n]+):(.+)\Z", reminder, re.S)
+    match = re.match("\A([^:\n]+):\s?(.+)\Z", reminder, re.S)
     if match:
       try:
         when = dateparser.parse(match[1])
-        duration = when - datetime.datetime.now()
+
+        # Issue in parsing
+        if when is None:
+          await react(ctx, "deny")
+          return await ctx.reply("Sorry, but I couldn't parse that.", delete_after=10, mention_author=False)
+
+        duration = when - datetime.datetime.utcnow()
+
+        # Past date
         if duration <= datetime.timedelta(0):
           await react(ctx, "deny")
           return await ctx.reply("I can't go back in time.", delete_after=10, mention_author=False)
+
+        # Date exceeding 5 years
         if duration > datetime.timedelta(days = 365.25 * 5):
           await react(ctx, "deny")
           return await ctx.reply("That's way too long.", delete_after=10, mention_author=False)
+
       except Exception as exc:
         await react(ctx, "deny")
         await ctx.reply(f"Error: {exc}", delete_after=10, mention_author=False)
@@ -75,6 +86,13 @@ class Reminder(Service):
         }
       }
 
+  	  # FIXME There is a timezone-related issue... SOMEWHERE in this file.
+      # All reminders are one hour sooner than they should be.
+      self.log.debug(f"Now:  {datetime.datetime.utcnow().strftime(TIME_FORMAT)}")
+      self.log.debug(f"Then: {new_reminder['datetime']}")
+      self.log.debug(f"Diff: {datetime.datetime.strptime(new_reminder['datetime'], TIME_FORMAT) - datetime.datetime.utcnow()}")
+      self.log.debug(f"Pending? {datetime.datetime.strptime(new_reminder['datetime'], TIME_FORMAT) - datetime.datetime.utcnow() <= datetime.timedelta(0)}")
+
       try:
         # Validation step just in case
         jsonschema.validate(instance=new_reminder, schema=self._reminder_schema)
@@ -90,7 +108,7 @@ class Reminder(Service):
         await ctx.reply(f"JSON Error: {msg}", mention_author=False)
     else:
       await react(ctx, "deny")
-      await ctx.reply("Unsupported syntax. Use `,rem <duration>:<message>`", delete_after=10, mention_author=False)
+      await ctx.reply("Unsupported syntax. Use `,rem <when>:<message>`", delete_after=10, mention_author=False)
 
   @reminder.command(aliases=["l"])
   async def list(self, ctx: commands.Context):
@@ -199,7 +217,7 @@ class Reminder(Service):
     # Check all reminders
     for reminder in self._reminders.all():
       # If they are pending
-      if datetime.datetime.utcnow() - datetime.datetime.strptime(reminder["datetime"], TIME_FORMAT) >= datetime.timedelta(0):
+      if datetime.datetime.strptime(reminder["datetime"], TIME_FORMAT) - datetime.datetime.utcnow() <= datetime.timedelta(0):
         # Announce them
         await self.announce_reminder(reminder)
         # And then remove them from the table
