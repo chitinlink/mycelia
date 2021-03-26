@@ -3,7 +3,7 @@ tinydb==4.1.1
 wavelink==0.9.8
 jsonschema==3.2.0
 colorlog==4.1.0
-pyyaml==5.3.1
+pyyaml==5.4.1
 schedule==0.6.0
 owoify==0.3.1
 docopt==0.6.2
