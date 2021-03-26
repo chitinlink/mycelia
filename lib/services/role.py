@@ -4,16 +4,23 @@ from tinydb import where
 
 from lib.utils.etc import Service, react
 from lib.utils.checks import is_mod, in_guild
-from lib.utils.text import fmt_list, fmt_code
+from lib.utils.text import fmt_list
 
 class Role(Service):
   def __init__(self, bot: commands.Bot):
     super().__init__(bot)
     self._roles = bot._db.table("roles")
 
+    self.bot.add_listener(self.catch_role_delete, "on_guild_role_delete")
+
   # Guild-only
   async def cog_check(self, ctx: commands.Context):
     return in_guild(ctx)
+
+  async def catch_role_delete(self, role: dRole):
+    if self._roles.search(where("id") == role.id):
+      self._roles.remove(where("id") == role.id)
+      await self.bot.notice_channel.send(f":x: Previously registered role deleted: {role.name} ({role.id})")
 
   @commands.group(aliases=["r"])
   async def role(self, ctx: commands.Context):
@@ -83,9 +90,12 @@ class Role(Service):
   @role.command(aliases=["l"])
   async def list(self, ctx: commands.Context):
     """ List all the self-assignable roles """
+    roles = \
+      map(lambda r: ctx.bot._guild.get_role(r["id"]).mention,
+        self._roles)
     await ctx.send(
       "**List of self-assignable roles:**\n" +
-      fmt_list(map(lambda r: ctx.bot._guild.get_role(r["id"]).mention, self._roles)) + "\n" +
+      fmt_list(roles) + "\n" +
       "If you'd like a role added (especially pronouns), ask a moderator!",
       allowed_mentions=AllowedMentions.none()
     )
