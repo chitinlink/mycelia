@@ -5,8 +5,8 @@
 
 Mycelia uses [discord.py], among other things. ([requirements.txt](./requirements.txt))
 
-Biggs is the Bodiam moderation/utilities bot.  
-Smalls is a music bot used in Bodiam and elsewhere.
+Biggs is a moderation/utilities bot.  
+Smalls is a music bot.
 
 - [Requirements](#requirements)
 - [Basic setup](#basic-setup)
